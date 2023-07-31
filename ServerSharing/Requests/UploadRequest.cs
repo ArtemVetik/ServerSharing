@@ -37,7 +37,7 @@ namespace ServerSharing
                 );
             });
 
-            return new Response((uint)response.Status.StatusCode, response.Status.StatusCode.ToString(), "");
+            return new Response((uint)response.Status.StatusCode, response.Status.StatusCode.ToString(), string.Empty);
         }
     }
 }
