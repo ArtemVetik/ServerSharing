@@ -1,13 +1,13 @@
-﻿using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
 
 namespace ServerSharing
 {
     public class SelectRequestParameters
     {
-        [JsonPropertyName("column")] public string Column { get; init; }
-        [JsonPropertyName("order")] public string Order { get; init; }
-        [JsonPropertyName("limit")] public ulong Limit { get; init; }
-        [JsonPropertyName("offset")] public ulong Offset { get; init; }
-        [JsonPropertyName("onlyself")] public bool Self { get; init; }
+        [JsonProperty("entry_type")] public EntryType EntryType { get; init; }
+        [JsonProperty("sort")] public Sort Sort { get; init; }
+        [JsonProperty("order")] public Order Order { get; init; }
+        [JsonProperty("limit")] public ulong Limit { get; init; }
+        [JsonProperty("offset")] public ulong Offset { get; init; }
     }
 }
