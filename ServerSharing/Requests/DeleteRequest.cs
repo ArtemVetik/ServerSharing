@@ -18,8 +18,8 @@ namespace ServerSharing
                     DECLARE $id AS string;
                     DECLARE $user_id AS string;
 
-                    DELETE FROM `{Tables.Records}` 
-                    WHERE id == $id AND user_id == $user_id;
+                    DELETE FROM `{Records.TablePath}`
+                    WHERE {Records.SId} == $id AND {Records.SUserId} == $user_id;
                 ";
 
                 return await session.ExecuteDataQuery(

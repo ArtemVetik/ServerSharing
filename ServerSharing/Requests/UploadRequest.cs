@@ -17,11 +17,11 @@ namespace ServerSharing
                 var query = $@"
                     DECLARE $id AS string;
                     DECLARE $user_id AS string;
-                    DECLARE $record AS string;
+                    DECLARE $body AS json;
                     DECLARE $date AS Datetime;
 
-                    UPSERT INTO `{Tables.Records}` (id, user_id, record, date) VALUES
-                        ($id, $user_id, $record, $date);
+                    UPSERT INTO `{Records.TablePath}` ({Records.SId}, {Records.SUserId}, {Records.SBody}, {Records.SDate})
+                    VALUES ($id, $user_id, $body, $date);
                 ";
 
                 return await session.ExecuteDataQuery(
@@ -31,7 +31,7 @@ namespace ServerSharing
                     {
                         { "$id", YdbValue.MakeString(Encoding.UTF8.GetBytes(Guid.NewGuid().ToString())) },
                         { "$user_id", YdbValue.MakeString(Encoding.UTF8.GetBytes(request.user_id)) },
-                        { "$record", YdbValue.MakeString(Encoding.UTF8.GetBytes(request.body)) },
+                        { "$body", YdbValue.MakeJson(request.body) },
                         { "$date", YdbValue.MakeDatetime(DateTime.UtcNow) }
                     }
                 );
