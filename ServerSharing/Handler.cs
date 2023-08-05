@@ -28,6 +28,9 @@ namespace ServerSharing
                 "DOWNLOAD" => new DownloadRequest(tableClient, request),
                 "SELECT" => new SelectRequest(tableClient, request),
                 "LIKE" => new LikeRequest(tableClient, request),
+#if TEST_ENVIRONMENT
+                "CLEAR" => new ClearRequest(tableClient, request),
+#endif
                 _ => throw new InvalidOperationException($"Method {request.method} not found")
             };
 

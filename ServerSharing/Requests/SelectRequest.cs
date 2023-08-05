@@ -25,14 +25,14 @@ namespace ServerSharing
 
             foreach (var row in resultSet.Rows)
             {
-                var downloadsCount = row["downloads.count"];
-                var likesCount = row["likes.count"];
+                var downloadsCount = row[$"{Downloads.Name}.count"];
+                var likesCount = row[$"{Likes.Name}.count"];
 
                 responseData.Add(new SelectResponseData()
                 {
-                    Id = Encoding.UTF8.GetString(row["records.id"].GetString()),
-                    Record = Encoding.UTF8.GetString(row["records.record"].GetOptionalString()),
-                    Datetime = row["records.date"].GetOptionalDatetime() ?? DateTime.MinValue,
+                    Id = Encoding.UTF8.GetString(row[Records.Id].GetString()),
+                    Body = row[Records.Body].GetOptionalJson(),
+                    Datetime = row[Records.Date].GetOptionalDatetime() ?? DateTime.MinValue,
                     Downloads = downloadsCount.TypeId == YdbTypeId.OptionalType ? (downloadsCount.GetOptionalUint64() ?? 0) : downloadsCount.GetUint64(),
                     Likes = likesCount.TypeId == YdbTypeId.OptionalType ? (likesCount.GetOptionalUint64() ?? 0) : likesCount.GetUint64(),
                 });

@@ -26,13 +26,13 @@ namespace ServerSharing
             {
                 var sortColumn = selectParameters.Sort switch
                 {
-                    Sort.Date => "records.date",
-                    Sort.Downloads => "downloads.count",
-                    Sort.Likes => "likes.count",
+                    Sort.Date => Records.Date,
+                    Sort.Downloads => $"{Downloads.Name}.count",
+                    Sort.Likes => $"{Likes.Name}.count",
                     _ => throw new NotImplementedException()
                 };
 
-                var query = $@"  DECLARE $limit AS Uint64;
+                var query = $@" DECLARE $limit AS Uint64;
                                 DECLARE $offset AS Uint64;
                                 {EntryTypes.Create(selectParameters.EntryType, _userId)} 
                                 ORDER BY {sortColumn} {selectParameters.Order}

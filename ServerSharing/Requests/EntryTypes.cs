@@ -18,66 +18,60 @@
             private static string All()
             {
                 return $@"
-                    $downloads = (SELECT id, COUNT(id) as count
-                    FROM `{Tables.Downloads}`
-                    GROUP BY id
+                    $downloads = (SELECT {Downloads.Id}, COUNT({Downloads.Id}) as count
+                    FROM `{Downloads.TablePath}` {Downloads.Name}
+                    GROUP BY {Downloads.Id}
                     ORDER BY count);
 
-                    $likes = (SELECT id, COUNT(id) as count
-                    FROM `{Tables.Likes}`
-                    GROUP BY id
+                    $likes = (SELECT {Likes.Id}, COUNT({Likes.Id}) as count
+                    FROM `{Likes.TablePath}` {Likes.Name}
+                    GROUP BY {Likes.Id}
                     ORDER BY count);
 
-                    SELECT records.id, records.record, records.date, downloads.count, likes.count
-                    FROM `{Tables.Records}` as records
-                    LEFT JOIN $downloads as downloads ON downloads.id == records.id
-                    LEFT JOIN $likes as likes ON likes.id == records.id
-                    GROUP BY records.id, records.record, records.date, downloads.count, likes.count
+                    SELECT {Records.Id}, {Records.Body}, {Records.Date}, {Downloads.Name}.count, {Likes.Name}.count
+                    FROM `{Records.TablePath}` as {Records.Name}
+                    LEFT JOIN $downloads as {Downloads.Name} ON {Downloads.Id} == {Records.Id}
+                    LEFT JOIN $likes as {Likes.Name} ON {Likes.Id} == {Records.Id}
                 ";
             }
 
             private static string Downloaded(string userId)
             {
                 return $@"
-                    $downloads = (SELECT user_id, id, COUNT(id) as count
-                    FROM `{Tables.Downloads}`
-                    where user_id = ""{userId}""
-                    GROUP BY user_id, id);
+                    $downloads = (SELECT {Downloads.UserId}, {Downloads.Id}, COUNT({Downloads.Id}) as count
+                    FROM `{Downloads.TablePath}` {Downloads.Name}
+                    where {Downloads.UserId} = ""{userId}""
+                    GROUP BY {Downloads.UserId}, {Downloads.Id});
 
-                    $likes = (SELECT user_id, id, COUNT(id) as count
-                    FROM `{Tables.Likes}`
-                    GROUP BY user_id, id);
+                    $likes = (SELECT {Likes.UserId}, {Likes.Id}, COUNT({Likes.Id}) as count
+                    FROM `{Likes.TablePath}` {Likes.Name}
+                    GROUP BY {Likes.UserId}, {Likes.Id});
 
-                    SELECT records.id, records.record, records.date, downloads.count, likes.count
-                    FROM `{Tables.Records}` as records
-                    INNER JOIN $downloads as downloads ON downloads.id == records.id
-                    LEFT JOIN $likes as likes ON likes.id == records.id
-                    GROUP BY records.id, records.record, records.date, downloads.count, likes.count
+                    SELECT {Records.Id}, {Records.Body}, {Records.Date}, {Downloads.Name}.count, {Likes.Name}.count
+                    FROM `{Records.TablePath}` as {Records.Name}
+                    INNER JOIN $downloads as {Downloads.Name} ON {Downloads.Id} == {Records.Id}
+                    LEFT JOIN $likes as {Likes.Name} ON {Likes.Id} == {Records.Id}
                 ";
             }
 
             private static string Uploaded(string userId)
             {
                 return $@"
-                    DECLARE $limit AS Uint64;
-                    DECLARE $offset AS Uint64;
-
-                    $downloads = (SELECT id, COUNT(id) as count
-                    FROM `{Tables.Downloads}`
-                    GROUP BY id
+                    $downloads = (SELECT {Downloads.Id}, COUNT({Downloads.Id}) as count
+                    FROM `{Downloads.TablePath}` {Downloads.Name}
+                    GROUP BY {Downloads.Id}
                     ORDER BY count);
 
-                    $likes = (SELECT id, COUNT(id) as count
-                    FROM `{Tables.Likes}`
-                    GROUP BY id
+                    $likes = (SELECT {Likes.Id}, COUNT({Likes.Id}) as count
+                    FROM `{Likes.TablePath}` {Likes.Name}
+                    GROUP BY {Likes.Id}
                     ORDER BY count);
 
-                    SELECT records.id, records.record, records.date, downloads.count, likes.count
-                    FROM `{Tables.Records}` as records
-                    LEFT JOIN $downloads as downloads ON downloads.id == records.id
-                    LEFT JOIN $likes as likes ON likes.id == records.id
-                    WHERE records.user_id == ""{userId}""
-                    GROUP BY records.id, records.record, records.date, downloads.count, likes.count
+                    SELECT {Records.Id}, {Records.Body}, {Records.Date}, {Downloads.Name}.count, {Likes.Name}.count
+                    FROM `{Records.TablePath}` as {Records.Name}
+                    LEFT JOIN $downloads as {Downloads.Name} ON {Downloads.Id} == {Records.Id}
+                    LEFT JOIN $likes as {Likes.Name} ON {Likes.Id} == {Records.Id}
+                    WHERE {Records.UserId} == ""{userId}""
                 ";
             }
         }

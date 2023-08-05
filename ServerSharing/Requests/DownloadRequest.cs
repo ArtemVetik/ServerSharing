@@ -17,8 +17,8 @@ namespace ServerSharing
                 var query = $@"
                     DECLARE $id AS string;
 
-                    SELECT record
-                    FROM `{Tables.Records}`
+                    SELECT {Records.Body}
+                    FROM `{Records.TablePath}` {Records.Name}
                     WHERE id = $id;
                 ";
 
@@ -46,7 +46,7 @@ namespace ServerSharing
                     DECLARE $user_id AS string;
                     DECLARE $id AS string;
 
-                    UPSERT INTO `{Tables.Downloads}` (user_id, id)
+                    UPSERT INTO `{Downloads.TablePath}` ({Downloads.SUserId}, {Downloads.SId})
                     VALUES ($user_id, $id);
                 ";
 
@@ -61,9 +61,9 @@ namespace ServerSharing
                 );
             });
 
-            var data = queryResponse.Result.ResultSets[0].Rows[0]["record"].GetOptionalString();
+            var data = queryResponse.Result.ResultSets[0].Rows[0][Records.SBody].GetOptionalJson();
 
-            return new Response((uint)response.Status.StatusCode, response.Status.StatusCode.ToString(), Encoding.UTF8.GetString(data));
+            return new Response((uint)response.Status.StatusCode, response.Status.StatusCode.ToString(), data);
         }
     }
 }
