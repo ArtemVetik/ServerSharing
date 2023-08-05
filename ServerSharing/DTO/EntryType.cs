@@ -5,6 +5,7 @@ namespace ServerSharing
     {
         All,
         Downloaded,
-        Uploaded
+        Uploaded,
+        Liked,
     }
 }

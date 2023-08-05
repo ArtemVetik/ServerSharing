@@ -11,6 +11,7 @@
                     EntryType.All => All(),
                     EntryType.Downloaded => Downloaded(userId),
                     EntryType.Uploaded => Uploaded(userId),
+                    EntryType.Liked => Liked(userId),
                     _ => throw new NotSupportedException()
                 };
             }
@@ -72,6 +73,25 @@
                     LEFT JOIN $downloads as {Downloads.Name} ON {Downloads.Id} == {Records.Id}
                     LEFT JOIN $likes as {Likes.Name} ON {Likes.Id} == {Records.Id}
                     WHERE {Records.UserId} == ""{userId}""
+                ";
+            }
+
+            private static string Liked(string userId)
+            {
+                return $@"
+                    $downloads = (SELECT {Downloads.UserId}, {Downloads.Id}, COUNT({Downloads.Id}) as count
+                    FROM `{Downloads.TablePath}` {Downloads.Name}
+                    GROUP BY {Downloads.UserId}, {Downloads.Id});
+
+                    $likes = (SELECT {Likes.UserId}, {Likes.Id}, COUNT({Likes.Id}) as count
+                    FROM `{Likes.TablePath}` {Likes.Name}
+                    where {Likes.UserId} = ""{userId}""
+                    GROUP BY {Likes.UserId}, {Likes.Id});
+
+                    SELECT {Records.Id}, {Records.Body}, {Records.Date}, {Downloads.Name}.count, {Likes.Name}.count
+                    FROM `{Records.TablePath}` as {Records.Name}
+                    INNER JOIN $likes as {Likes.Name} ON {Likes.Id} == {Records.Id}
+                    LEFT JOIN $downloads as {Downloads.Name} ON {Downloads.Id} == {Records.Id}
                 ";
             }
         }
