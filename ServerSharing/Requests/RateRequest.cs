@@ -34,7 +34,7 @@ namespace ServerSharing
                     DECLARE $id AS string;
                     DECLARE $rating AS int8;
 
-                    UPSERT INTO `{RatingTable.TablePath}` ({RatingTable.SUserId}, {RatingTable.SId}, {RatingTable.SRating})
+                    UPSERT INTO `{Tables.Ratings}` (user_id, id, rating)
                     VALUES ($user_id, $id, $rating);
                 ";
 

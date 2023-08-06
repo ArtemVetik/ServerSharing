@@ -20,8 +20,6 @@ namespace ServerSharing
             };
 
             var request = new Request("SELECT", "thisUser", JsonConvert.SerializeObject(body));
-            Console.WriteLine(JsonConvert.SerializeObject(request));
-            return;
             var content = new StringContent(JsonConvert.SerializeObject(request));
 
             var response = await client.PostAsync("https://functions.yandexcloud.net/d4eva0ud0d8cncdqa8uv?integration=raw", content);

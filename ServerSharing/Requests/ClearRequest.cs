@@ -14,10 +14,10 @@ namespace ServerSharing
         {
             var table = request.body switch
             {
-                "records" => Records.TablePath,
-                "downloads" => Downloads.TablePath,
-                "likes" => Likes.TablePath,
-                "rating" => RatingTable.TablePath,
+                "records" => Tables.Records,
+                "downloads" => Tables.Downloads,
+                "likes" => Tables.Likes,
+                "rating" => Tables.Ratings,
                 _ => throw new InvalidOperationException()
             };
 

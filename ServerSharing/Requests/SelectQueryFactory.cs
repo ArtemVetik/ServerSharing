@@ -78,11 +78,11 @@ namespace ServerSharing
             {
                 var sortColumn = orderBy[i].Sort switch
                 {
-                    Sort.Date => Records.Date,
-                    Sort.Downloads => $"{Downloads.Name}.count",
-                    Sort.Likes => $"{Likes.Name}.count",
-                    Sort.RaingCount => $"{RatingTable.Name}.count",
-                    Sort.RaingAverage => $"{RatingTable.Name}.avg",
+                    Sort.Date => "records.date",
+                    Sort.Downloads => "downloads.count",
+                    Sort.Likes => "likes.count",
+                    Sort.RaingCount => "ratings.count",
+                    Sort.RaingAverage => "ratings.avg",
                     _ => throw new NotImplementedException()
                 };
 

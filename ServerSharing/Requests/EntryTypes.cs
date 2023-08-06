@@ -19,99 +19,99 @@
             private static string All()
             {
                 return $@"
-                    $downloads = (SELECT {Downloads.Id}, COUNT({Downloads.Id}) as count
-                    FROM `{Downloads.TablePath}` {Downloads.Name}
-                    GROUP BY {Downloads.Id}
+                    $downloads = (SELECT downloads.id, COUNT(downloads.id) as count
+                    FROM `{Tables.Downloads}` downloads
+                    GROUP BY downloads.id
                     ORDER BY count);
 
-                    $likes = (SELECT {Likes.Id}, COUNT({Likes.Id}) as count
-                    FROM `{Likes.TablePath}` {Likes.Name}
-                    GROUP BY {Likes.Id}
+                    $likes = (SELECT likes.id, COUNT(likes.id) as count
+                    FROM `{Tables.Likes}` likes
+                    GROUP BY likes.id
                     ORDER BY count);
 
-                    $rating = (SELECT {RatingTable.Id}, COUNT({RatingTable.Id}) as count, AVG({RatingTable.Rating}) as avg
-                    FROM `{RatingTable.TablePath}` {RatingTable.Name}
-                    GROUP BY {RatingTable.Id});
+                    $rating = (SELECT ratings.id, COUNT(ratings.id) as count, AVG(ratings.rating) as avg
+                    FROM `{Tables.Ratings}` ratings
+                    GROUP BY ratings.id);
 
-                    SELECT {Records.Id}, {Records.Body}, {Records.Date}, {Downloads.Name}.count, {Likes.Name}.count, {RatingTable.Name}.count, {RatingTable.Name}.avg
-                    FROM `{Records.TablePath}` as {Records.Name}
-                    LEFT JOIN $downloads as {Downloads.Name} ON {Downloads.Id} == {Records.Id}
-                    LEFT JOIN $likes as {Likes.Name} ON {Likes.Id} == {Records.Id}
-                    LEFT JOIN $rating as {RatingTable.Name} ON {RatingTable.Id} == {Records.Id}
+                    SELECT records.id, records.body, records.date, downloads.count, likes.count, ratings.count, ratings.avg
+                    FROM `{Tables.Records}` as records
+                    LEFT JOIN $downloads as downloads ON downloads.id == records.id
+                    LEFT JOIN $likes as likes ON likes.id == records.id
+                    LEFT JOIN $rating as ratings ON ratings.id == records.id
                 ";
             }
 
             private static string Downloaded(string userId)
             {
                 return $@"
-                    $downloads = (SELECT {Downloads.UserId}, {Downloads.Id}, COUNT({Downloads.Id}) as count
-                    FROM `{Downloads.TablePath}` {Downloads.Name}
-                    where {Downloads.UserId} = ""{userId}""
-                    GROUP BY {Downloads.UserId}, {Downloads.Id});
+                    $downloads = (SELECT downloads.user_id, downloads.id, COUNT(downloads.id) as count
+                    FROM `{Tables.Downloads}` downloads
+                    where downloads.user_id = ""{userId}""
+                    GROUP BY downloads.user_id, downloads.id);
 
-                    $likes = (SELECT {Likes.UserId}, {Likes.Id}, COUNT({Likes.Id}) as count
-                    FROM `{Likes.TablePath}` {Likes.Name}
-                    GROUP BY {Likes.UserId}, {Likes.Id});
+                    $likes = (SELECT likes.user_id, likes.id, COUNT(likes.id) as count
+                    FROM `{Tables.Likes}` likes
+                    GROUP BY likes.user_id, likes.id);
 
-                    $rating = (SELECT {RatingTable.Id}, COUNT({RatingTable.Id}) as count, AVG({RatingTable.Rating}) as avg
-                    FROM `{RatingTable.TablePath}` {RatingTable.Name}
-                    GROUP BY {RatingTable.Id});
+                    $rating = (SELECT ratings.id, COUNT(ratings.id) as count, AVG(ratings.rating) as avg
+                    FROM `{Tables.Ratings}` ratings
+                    GROUP BY ratings.id);
 
-                    SELECT {Records.Id}, {Records.Body}, {Records.Date}, {Downloads.Name}.count, {Likes.Name}.count, {RatingTable.Name}.count, {RatingTable.Name}.avg
-                    FROM `{Records.TablePath}` as {Records.Name}
-                    INNER JOIN $downloads as {Downloads.Name} ON {Downloads.Id} == {Records.Id}
-                    LEFT JOIN $likes as {Likes.Name} ON {Likes.Id} == {Records.Id}
-                    LEFT JOIN $rating as {RatingTable.Name} ON {RatingTable.Id} == {Records.Id}
+                    SELECT records.id, records.body, records.date, downloads.count, likes.count, ratings.count, ratings.avg
+                    FROM `{Tables.Records}` as records
+                    INNER JOIN $downloads as downloads ON downloads.id == records.id
+                    LEFT JOIN $likes as likes ON likes.id == records.id
+                    LEFT JOIN $rating as ratings ON ratings.id == records.id
                 ";
             }
 
             private static string Uploaded(string userId)
             {
                 return $@"
-                    $downloads = (SELECT {Downloads.Id}, COUNT({Downloads.Id}) as count
-                    FROM `{Downloads.TablePath}` {Downloads.Name}
-                    GROUP BY {Downloads.Id}
+                    $downloads = (SELECT downloads.id, COUNT(downloads.id) as count
+                    FROM `{Tables.Downloads}` downloads
+                    GROUP BY downloads.id
                     ORDER BY count);
 
-                    $likes = (SELECT {Likes.Id}, COUNT({Likes.Id}) as count
-                    FROM `{Likes.TablePath}` {Likes.Name}
-                    GROUP BY {Likes.Id}
+                    $likes = (SELECT likes.id, COUNT(likes.id) as count
+                    FROM `{Tables.Likes}` likes
+                    GROUP BY likes.id
                     ORDER BY count);
 
-                    $rating = (SELECT {RatingTable.Id}, COUNT({RatingTable.Id}) as count, AVG({RatingTable.Rating}) as avg
-                    FROM `{RatingTable.TablePath}` {RatingTable.Name}
-                    GROUP BY {RatingTable.Id});
+                    $rating = (SELECT ratings.id, COUNT(ratings.id) as count, AVG(ratings.rating) as avg
+                    FROM `{Tables.Ratings}` ratings
+                    GROUP BY ratings.id);
 
-                    SELECT {Records.Id}, {Records.Body}, {Records.Date}, {Downloads.Name}.count, {Likes.Name}.count, {RatingTable.Name}.count, {RatingTable.Name}.avg
-                    FROM `{Records.TablePath}` as {Records.Name}
-                    LEFT JOIN $downloads as {Downloads.Name} ON {Downloads.Id} == {Records.Id}
-                    LEFT JOIN $likes as {Likes.Name} ON {Likes.Id} == {Records.Id}
-                    LEFT JOIN $rating as {RatingTable.Name} ON {RatingTable.Id} == {Records.Id}
-                    WHERE {Records.UserId} == ""{userId}""
+                    SELECT records.id, records.body, records.date, downloads.count, likes.count, ratings.count, ratings.avg
+                    FROM `{Tables.Records}` as records
+                    LEFT JOIN $downloads as downloads ON downloads.id == records.id
+                    LEFT JOIN $likes as likes ON likes.id == records.id
+                    LEFT JOIN $rating as ratings ON ratings.id == records.id
+                    WHERE records.user_id == ""{userId}""
                 ";
             }
 
             private static string Liked(string userId)
             {
                 return $@"
-                    $downloads = (SELECT {Downloads.UserId}, {Downloads.Id}, COUNT({Downloads.Id}) as count
-                    FROM `{Downloads.TablePath}` {Downloads.Name}
-                    GROUP BY {Downloads.UserId}, {Downloads.Id});
+                    $downloads = (SELECT downloads.user_id, downloads.id, COUNT(downloads.id) as count
+                    FROM `{Tables.Downloads}` downloads
+                    GROUP BY downloads.user_id, downloads.id);
 
-                    $likes = (SELECT {Likes.UserId}, {Likes.Id}, COUNT({Likes.Id}) as count
-                    FROM `{Likes.TablePath}` {Likes.Name}
-                    where {Likes.UserId} = ""{userId}""
-                    GROUP BY {Likes.UserId}, {Likes.Id});
+                    $likes = (SELECT likes.user_id, likes.id, COUNT(likes.id) as count
+                    FROM `{Tables.Likes}` likes
+                    where likes.user_id = ""{userId}""
+                    GROUP BY likes.user_id, likes.id);
 
-                    $rating = (SELECT {RatingTable.Id}, COUNT({RatingTable.Id}) as count, AVG({RatingTable.Rating}) as avg
-                    FROM `{RatingTable.TablePath}` {RatingTable.Name}
-                    GROUP BY {RatingTable.Id});
+                    $rating = (SELECT ratings.id, COUNT(ratings.id) as count, AVG(ratings.rating) as avg
+                    FROM `{Tables.Ratings}` ratings
+                    GROUP BY ratings.id);
 
-                    SELECT {Records.Id}, {Records.Body}, {Records.Date}, {Downloads.Name}.count, {Likes.Name}.count, {RatingTable.Name}.count, {RatingTable.Name}.avg
-                    FROM `{Records.TablePath}` as {Records.Name}
-                    INNER JOIN $likes as {Likes.Name} ON {Likes.Id} == {Records.Id}
-                    LEFT JOIN $downloads as {Downloads.Name} ON {Downloads.Id} == {Records.Id}
-                    LEFT JOIN $rating as {RatingTable.Name} ON {RatingTable.Id} == {Records.Id}
+                    SELECT records.id, records.body, records.date, downloads.count, likes.count, ratings.count, ratings.avg
+                    FROM `{Tables.Records}` as records
+                    INNER JOIN $likes as likes ON likes.id == records.id
+                    LEFT JOIN $downloads as downloads ON downloads.id == records.id
+                    LEFT JOIN $rating as ratings ON ratings.id == records.id
                 ";
             }
         }
