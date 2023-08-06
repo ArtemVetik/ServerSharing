@@ -51,4 +51,22 @@
 
         public static readonly string TablePath;
     }
+
+    public class RatingTable
+    {
+        public const string Name = "rating";
+        public const string UserId = "rating.user_id";
+        public const string Id = "rating.id";
+        public const string Rating = "rating.rating";
+        public const string SUserId = "user_id";
+        public const string SId = "id";
+        public const string SRating = "rating";
+
+        static RatingTable()
+        {
+            TablePath = Environment.GetEnvironmentVariable("RateTable");
+        }
+
+        public static readonly string TablePath;
+    }
 }

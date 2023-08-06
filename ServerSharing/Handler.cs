@@ -28,6 +28,7 @@ namespace ServerSharing
                 "DOWNLOAD" => new DownloadRequest(tableClient, request),
                 "SELECT" => new SelectRequest(tableClient, request),
                 "LIKE" => new LikeRequest(tableClient, request),
+                "RATE" => new RateRequest(tableClient, request),
 #if TEST_ENVIRONMENT
                 "CLEAR" => new ClearRequest(tableClient, request),
 #endif

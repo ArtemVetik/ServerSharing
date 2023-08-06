@@ -6,5 +6,7 @@ namespace ServerSharing
         Date,
         Downloads,
         Likes,
+        RaingCount,
+        RaingAverage,
     }
 }
