@@ -29,10 +29,15 @@
                     GROUP BY {Likes.Id}
                     ORDER BY count);
 
-                    SELECT {Records.Id}, {Records.Body}, {Records.Date}, {Downloads.Name}.count, {Likes.Name}.count
+                    $rating = (SELECT {RatingTable.Id}, COUNT({RatingTable.Id}) as count, AVG({RatingTable.Rating}) as avg
+                    FROM `{RatingTable.TablePath}` {RatingTable.Name}
+                    GROUP BY {RatingTable.Id});
+
+                    SELECT {Records.Id}, {Records.Body}, {Records.Date}, {Downloads.Name}.count, {Likes.Name}.count, {RatingTable.Name}.count, {RatingTable.Name}.avg
                     FROM `{Records.TablePath}` as {Records.Name}
                     LEFT JOIN $downloads as {Downloads.Name} ON {Downloads.Id} == {Records.Id}
                     LEFT JOIN $likes as {Likes.Name} ON {Likes.Id} == {Records.Id}
+                    LEFT JOIN $rating as {RatingTable.Name} ON {RatingTable.Id} == {Records.Id}
                 ";
             }
 
@@ -48,10 +53,15 @@
                     FROM `{Likes.TablePath}` {Likes.Name}
                     GROUP BY {Likes.UserId}, {Likes.Id});
 
-                    SELECT {Records.Id}, {Records.Body}, {Records.Date}, {Downloads.Name}.count, {Likes.Name}.count
+                    $rating = (SELECT {RatingTable.Id}, COUNT({RatingTable.Id}) as count, AVG({RatingTable.Rating}) as avg
+                    FROM `{RatingTable.TablePath}` {RatingTable.Name}
+                    GROUP BY {RatingTable.Id});
+
+                    SELECT {Records.Id}, {Records.Body}, {Records.Date}, {Downloads.Name}.count, {Likes.Name}.count, {RatingTable.Name}.count, {RatingTable.Name}.avg
                     FROM `{Records.TablePath}` as {Records.Name}
                     INNER JOIN $downloads as {Downloads.Name} ON {Downloads.Id} == {Records.Id}
                     LEFT JOIN $likes as {Likes.Name} ON {Likes.Id} == {Records.Id}
+                    LEFT JOIN $rating as {RatingTable.Name} ON {RatingTable.Id} == {Records.Id}
                 ";
             }
 
@@ -68,10 +78,15 @@
                     GROUP BY {Likes.Id}
                     ORDER BY count);
 
-                    SELECT {Records.Id}, {Records.Body}, {Records.Date}, {Downloads.Name}.count, {Likes.Name}.count
+                    $rating = (SELECT {RatingTable.Id}, COUNT({RatingTable.Id}) as count, AVG({RatingTable.Rating}) as avg
+                    FROM `{RatingTable.TablePath}` {RatingTable.Name}
+                    GROUP BY {RatingTable.Id});
+
+                    SELECT {Records.Id}, {Records.Body}, {Records.Date}, {Downloads.Name}.count, {Likes.Name}.count, {RatingTable.Name}.count, {RatingTable.Name}.avg
                     FROM `{Records.TablePath}` as {Records.Name}
                     LEFT JOIN $downloads as {Downloads.Name} ON {Downloads.Id} == {Records.Id}
                     LEFT JOIN $likes as {Likes.Name} ON {Likes.Id} == {Records.Id}
+                    LEFT JOIN $rating as {RatingTable.Name} ON {RatingTable.Id} == {Records.Id}
                     WHERE {Records.UserId} == ""{userId}""
                 ";
             }
@@ -88,10 +103,15 @@
                     where {Likes.UserId} = ""{userId}""
                     GROUP BY {Likes.UserId}, {Likes.Id});
 
-                    SELECT {Records.Id}, {Records.Body}, {Records.Date}, {Downloads.Name}.count, {Likes.Name}.count
+                    $rating = (SELECT {RatingTable.Id}, COUNT({RatingTable.Id}) as count, AVG({RatingTable.Rating}) as avg
+                    FROM `{RatingTable.TablePath}` {RatingTable.Name}
+                    GROUP BY {RatingTable.Id});
+
+                    SELECT {Records.Id}, {Records.Body}, {Records.Date}, {Downloads.Name}.count, {Likes.Name}.count, {RatingTable.Name}.count, {RatingTable.Name}.avg
                     FROM `{Records.TablePath}` as {Records.Name}
                     INNER JOIN $likes as {Likes.Name} ON {Likes.Id} == {Records.Id}
                     LEFT JOIN $downloads as {Downloads.Name} ON {Downloads.Id} == {Records.Id}
+                    LEFT JOIN $rating as {RatingTable.Name} ON {RatingTable.Id} == {Records.Id}
                 ";
             }
         }

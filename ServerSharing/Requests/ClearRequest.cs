@@ -17,6 +17,7 @@ namespace ServerSharing
                 "records" => Records.TablePath,
                 "downloads" => Downloads.TablePath,
                 "likes" => Likes.TablePath,
+                "rating" => RatingTable.TablePath,
                 _ => throw new InvalidOperationException()
             };
 

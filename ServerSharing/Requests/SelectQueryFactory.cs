@@ -24,19 +24,13 @@ namespace ServerSharing
 
             return await _client.SessionExec(async session =>
             {
-                var sortColumn = selectParameters.Sort switch
-                {
-                    Sort.Date => Records.Date,
-                    Sort.Downloads => $"{Downloads.Name}.count",
-                    Sort.Likes => $"{Likes.Name}.count",
-                    _ => throw new NotImplementedException()
-                };
-
                 var query = $@" DECLARE $limit AS Uint64;
                                 DECLARE $offset AS Uint64;
                                 {EntryTypes.Create(selectParameters.EntryType, _userId)} 
-                                ORDER BY {sortColumn} {selectParameters.Order}
+                                ORDER BY {CreateOrderBy(selectParameters.OrderBy)}
                                 LIMIT $limit OFFSET $offset;";
+
+                Console.WriteLine(query);
 
                 return await session.ExecuteDataQuery(
                     query: query,
@@ -50,20 +44,23 @@ namespace ServerSharing
             });
         }
 
-        private SelectRequestParameters ParseSelectParameters(string body)
+        private SelectRequestBody ParseSelectParameters(string body)
         {
             try
             {
-                var selectData = JsonConvert.DeserializeObject<SelectRequestParameters>(body);
+                var selectData = JsonConvert.DeserializeObject<SelectRequestBody>(body);
 
                 if (Enum.IsDefined(typeof(EntryType), selectData.EntryType) == false)
                     throw new ArgumentException($"Request is missing {nameof(selectData.EntryType)} parameter");
 
-                if (Enum.IsDefined(typeof(Sort), selectData.Sort) == false)
-                    throw new ArgumentException($"Request is missing {nameof(selectData.Sort)} parameter");
+                foreach (var orderBy in selectData.OrderBy)
+                {
+                    if (Enum.IsDefined(typeof(Sort), orderBy.Sort) == false)
+                        throw new ArgumentException($"Request is missing {nameof(orderBy.Sort)} parameter");
 
-                if (Enum.IsDefined(typeof(Order), selectData.Order) == false)
-                    throw new ArgumentException($"Request is missing {nameof(selectData.Order)} parameter");
+                    if (Enum.IsDefined(typeof(Order), orderBy.Order) == false)
+                        throw new ArgumentException($"Request is missing {nameof(orderBy.Order)} parameter");
+                }
 
                 return selectData;
             }
@@ -71,6 +68,31 @@ namespace ServerSharing
             {
                 throw new InvalidOperationException("Request body has an invalid format", exception);
             }
+        }
+
+        private string CreateOrderBy(SelectRequestBody.SelectOrderBy[] orderBy)
+        {
+            var result = string.Empty;
+
+            for (int i = 0; i < orderBy.Length; i++)
+            {
+                var sortColumn = orderBy[i].Sort switch
+                {
+                    Sort.Date => Records.Date,
+                    Sort.Downloads => $"{Downloads.Name}.count",
+                    Sort.Likes => $"{Likes.Name}.count",
+                    Sort.RaingCount => $"{RatingTable.Name}.count",
+                    Sort.RaingAverage => $"{RatingTable.Name}.avg",
+                    _ => throw new NotImplementedException()
+                };
+
+                result += $"{sortColumn} {orderBy[i].Order}";
+
+                if (i < orderBy.Length - 1)
+                    result += ", ";
+            }
+
+            return result;
         }
     }
 }
