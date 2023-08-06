@@ -1,72 +1,18 @@
 ﻿namespace ServerSharing
 {
-    public class Records
+    public static class Tables
     {
-        public const string Name = "records";
-        public const string Id = "records.id";
-        public const string UserId = "records.user_id";
-        public const string Date = "records.date";
-        public const string Body = "records.body";
-        public const string SId = "id";
-        public const string SUserId = "user_id";
-        public const string SDate = "date";
-        public const string SBody = "body";
+        public static readonly string Records;
+        public static readonly string Downloads;
+        public static readonly string Likes;
+        public static readonly string Ratings;
 
-        static Records()
+        static Tables()
         {
-            TablePath = Environment.GetEnvironmentVariable("RecordsTable");
+            Records = Environment.GetEnvironmentVariable("RecordsTable");
+            Downloads = Environment.GetEnvironmentVariable("DownloadsTable");
+            Likes = Environment.GetEnvironmentVariable("LikesTable");
+            Ratings = Environment.GetEnvironmentVariable("RateTable");
         }
-
-        public static readonly string TablePath;
-    }
-
-    public class Downloads
-    {
-        public const string Name = "downloads";
-        public const string UserId = "downloads.user_id";
-        public const string Id = "downloads.id";
-        public const string SUserId = "user_id";
-        public const string SId = "id";
-
-        static Downloads()
-        {
-            TablePath = Environment.GetEnvironmentVariable("DownloadsTable");
-        }
-
-        public static readonly string TablePath;
-    }
-
-    public class Likes
-    {
-        public const string Name = "likes";
-        public const string UserId = "likes.user_id";
-        public const string Id = "likes.id";
-        public const string SUserId = "user_id";
-        public const string SId = "id";
-
-        static Likes()
-        {
-            TablePath = Environment.GetEnvironmentVariable("LikesTable");
-        }
-
-        public static readonly string TablePath;
-    }
-
-    public class RatingTable
-    {
-        public const string Name = "rating";
-        public const string UserId = "rating.user_id";
-        public const string Id = "rating.id";
-        public const string Rating = "rating.rating";
-        public const string SUserId = "user_id";
-        public const string SId = "id";
-        public const string SRating = "rating";
-
-        static RatingTable()
-        {
-            TablePath = Environment.GetEnvironmentVariable("RateTable");
-        }
-
-        public static readonly string TablePath;
     }
 }

@@ -18,7 +18,7 @@ namespace ServerSharing
                     DECLARE $user_id AS string;
                     DECLARE $id AS string;
 
-                    UPSERT INTO `{Likes.TablePath}` ({Likes.SUserId}, {Likes.SId})
+                    UPSERT INTO `{Tables.Likes}` (user_id, id)
                     VALUES ($user_id, $id);
                 ";
 

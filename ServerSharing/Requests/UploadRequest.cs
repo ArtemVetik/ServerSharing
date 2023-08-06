@@ -20,7 +20,7 @@ namespace ServerSharing
                     DECLARE $body AS json;
                     DECLARE $date AS Datetime;
 
-                    UPSERT INTO `{Records.TablePath}` ({Records.SId}, {Records.SUserId}, {Records.SBody}, {Records.SDate})
+                    UPSERT INTO `{Tables.Records}` (id, user_id, body, date)
                     VALUES ($id, $user_id, $body, $date);
                 ";
 
