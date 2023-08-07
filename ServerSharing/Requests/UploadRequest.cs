@@ -12,6 +12,8 @@ namespace ServerSharing
 
         protected async override Task<Response> Handle(TableClient client, Request request)
         {
+            var guid = Guid.NewGuid();
+
             var response = await client.SessionExec(async session =>
             {
                 var query = $@"
@@ -29,7 +31,7 @@ namespace ServerSharing
                     txControl: TxControl.BeginSerializableRW().Commit(),
                     parameters: new Dictionary<string, YdbValue>
                     {
-                        { "$id", YdbValue.MakeString(Encoding.UTF8.GetBytes(Guid.NewGuid().ToString())) },
+                        { "$id", YdbValue.MakeString(Encoding.UTF8.GetBytes(guid.ToString())) },
                         { "$user_id", YdbValue.MakeString(Encoding.UTF8.GetBytes(request.user_id)) },
                         { "$body", YdbValue.MakeJson(request.body) },
                         { "$date", YdbValue.MakeDatetime(DateTime.UtcNow) }
@@ -37,7 +39,7 @@ namespace ServerSharing
                 );
             });
 
-            return new Response((uint)response.Status.StatusCode, response.Status.StatusCode.ToString(), string.Empty);
+            return new Response((uint)response.Status.StatusCode, response.Status.StatusCode.ToString(), guid.ToString());
         }
     }
 }
