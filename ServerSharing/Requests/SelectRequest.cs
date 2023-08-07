@@ -25,8 +25,10 @@ namespace ServerSharing
 
             foreach (var row in resultSet.Rows)
             {
-                var downloadsCount = row[$"downloads.count"];
-                var likesCount = row[$"likes.count"];
+                var downloadsCount = row["downloads.count"];
+                var likesCount = row["likes.count"];
+                var ratingsCount = row["ratings.count"];
+                var ratingsAverage = row["ratings.avg"];
 
                 responseData.Add(new SelectResponseData()
                 {
@@ -35,6 +37,8 @@ namespace ServerSharing
                     Datetime = row["records.date"].GetOptionalDatetime() ?? DateTime.MinValue,
                     Downloads = downloadsCount.TypeId == YdbTypeId.OptionalType ? (downloadsCount.GetOptionalUint64() ?? 0) : downloadsCount.GetUint64(),
                     Likes = likesCount.TypeId == YdbTypeId.OptionalType ? (likesCount.GetOptionalUint64() ?? 0) : likesCount.GetUint64(),
+                    RatingCount = ratingsCount.TypeId == YdbTypeId.OptionalType ? (ratingsCount.GetOptionalUint64() ?? 0) : ratingsCount.GetUint64(),
+                    RatingAverage = ratingsAverage.TypeId == YdbTypeId.OptionalType ? (ratingsAverage.GetOptionalDouble() ?? 0) : ratingsAverage.GetDouble(),
                 });
             }
 
