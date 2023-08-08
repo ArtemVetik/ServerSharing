@@ -1,6 +1,7 @@
 ﻿#if TEST_ENVIRONMENT
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
+using ServerSharing.Data;
 using Ydb.Sdk.Table;
 using Ydb.Sdk.Value;
 
@@ -53,18 +54,11 @@ namespace ServerSharing
         {
             var bynaryAttribute = table == Tables.Data ? "data" : table == Tables.Images ? "image" : throw new ArgumentNullException(nameof(table));
 
-            var response = await client.SessionExec(async session =>
+            try
             {
-                var query = $@"
-                    drop table `{table}`;
-                ";
-
-                return await session.ExecuteDataQuery(
-                    query: query,
-                    txControl: TxControl.BeginSerializableRW().Commit(),
-                    parameters: new Dictionary<string, YdbValue>()
-                );
-            });
+                await _awsClient.DeleteTableAsync(table);
+            }
+            catch (Exception) { }
 
             var request = new CreateTableRequest
             {

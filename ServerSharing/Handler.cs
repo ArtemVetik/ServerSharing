@@ -5,6 +5,7 @@ using Yandex.Cloud.Credentials;
 using Yandex.Cloud.Functions;
 using Amazon.DynamoDBv2;
 using Amazon;
+using ServerSharing.Data;
 
 namespace ServerSharing
 {

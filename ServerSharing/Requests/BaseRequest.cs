@@ -1,4 +1,5 @@
 ﻿using Ydb.Sdk.Table;
+using ServerSharing.Data;
 
 namespace ServerSharing
 {
