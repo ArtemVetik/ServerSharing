@@ -31,7 +31,7 @@ namespace ServerSharing
             };
 
             if (table == Tables.Images || table == Tables.Data)
-                return await ClearAwsTable(table, client);
+                return await ClearAwsTable(table);
 
             var response = await client.SessionExec(async session =>
             {
@@ -50,7 +50,7 @@ namespace ServerSharing
             return new Response((uint)response.Status.StatusCode, response.Status.StatusCode.ToString(), string.Empty);
         }
 
-        private async Task<Response> ClearAwsTable(string table, TableClient client)
+        private async Task<Response> ClearAwsTable(string table)
         {
             var bynaryAttribute = table == Tables.Data ? "data" : table == Tables.Images ? "image" : throw new ArgumentNullException(nameof(table));
 

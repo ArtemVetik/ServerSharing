@@ -21,7 +21,7 @@ namespace ServerSharing
                 Offset = 0,
             };
 
-            var request = new Request("SELECT", "thisUser", JsonConvert.SerializeObject(body));
+            var request = new Request() { method = "SELECT", user_id = "thisUser", body = JsonConvert.SerializeObject(body) };
             var content = new StringContent(JsonConvert.SerializeObject(request));
 
             var response = await _client.PostAsync("https://functions.yandexcloud.net/d4eva0ud0d8cncdqa8uv?integration=raw", content);

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using NUnit.Framework;
 using ServerSharing.Data;
 
 namespace ServerSharingTests
@@ -11,7 +12,7 @@ namespace ServerSharingTests
         {
             var id = await CloudFunction.Upload("test_upload", new UploadData() { Image = new byte[] { }, Data = new byte[] { } });
 
-            var response = await CloudFunction.Post(new Request("RATE", "some_user", JsonConvert.SerializeObject(new RatingRequestBody()
+            var response = await CloudFunction.Post(Request.Create("RATE", "some_user", JsonConvert.SerializeObject(new RatingRequestBody()
             {
                 Id = id,
                 Rating = 5,
@@ -23,7 +24,7 @@ namespace ServerSharingTests
         [Test]
         public async Task Rate_002_UnknownId_ShouldLike()
         {
-            var response = await CloudFunction.Post(new Request("RATE", "some_user", JsonConvert.SerializeObject(new RatingRequestBody()
+            var response = await CloudFunction.Post(Request.Create("RATE", "some_user", JsonConvert.SerializeObject(new RatingRequestBody()
             {
                 Id = "unknown",
                 Rating = 5,
@@ -35,7 +36,7 @@ namespace ServerSharingTests
         [Test]
         public async Task Rate_003_InvalidRating_ShouldBeNotSuccess()
         {
-            var response = await CloudFunction.Post(new Request("RATE", "some_user", JsonConvert.SerializeObject(new RatingRequestBody()
+            var response = await CloudFunction.Post(Request.Create("RATE", "some_user", JsonConvert.SerializeObject(new RatingRequestBody()
             {
                 Id = "unknown",
                 Rating = 10,

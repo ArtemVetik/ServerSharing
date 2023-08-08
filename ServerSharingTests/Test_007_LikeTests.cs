@@ -1,4 +1,5 @@
-﻿using ServerSharing.Data;
+﻿using NUnit.Framework;
+using ServerSharing.Data;
 
 namespace ServerSharingTests
 {
@@ -10,14 +11,14 @@ namespace ServerSharingTests
         {
             var id = await CloudFunction.Upload("test_upload", new UploadData() { Image = new byte[] { }, Data = new byte[] { } });
 
-            var response = await CloudFunction.Post(new Request("LIKE", "some_user", id));
+            var response = await CloudFunction.Post(Request.Create("LIKE", "some_user", id));
             Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
         }
 
         [Test]
         public async Task Like_002_UnknownId_ShouldLike()
         {
-            var response = await CloudFunction.Post(new Request("LIKE", "some_user", "unknown_id"));
+            var response = await CloudFunction.Post(Request.Create("LIKE", "some_user", "unknown_id"));
             Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
         }
     }

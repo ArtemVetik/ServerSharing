@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using NUnit.Framework;
 using ServerSharing.Data;
 
 namespace ServerSharingTests
@@ -28,14 +29,14 @@ namespace ServerSharingTests
         {
             var selectRequest = "{\"entry_type\":\"uploaded\",\"order_by\":[{\"sort\":\"date\",\"order\":\"desc\"}],\"limit\":20,\"offset\":0}";
 
-            var response = await CloudFunction.Post(new Request("SELECT", "user1", selectRequest));
+            var response = await CloudFunction.Post(Request.Create("SELECT", "user1", selectRequest));
             Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
             var selectData = JsonConvert.DeserializeObject<List<SelectResponseData>>(response.Body);
 
             Assert.That(selectData[0].RatingCount, Is.EqualTo(2));
             Assert.That(selectData[0].RatingAverage, Is.EqualTo(3f));
 
-            response = await CloudFunction.Post(new Request("SELECT", "user2", selectRequest));
+            response = await CloudFunction.Post(Request.Create("SELECT", "user2", selectRequest));
             Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
             selectData = JsonConvert.DeserializeObject<List<SelectResponseData>>(response.Body);
 
@@ -50,7 +51,7 @@ namespace ServerSharingTests
 
             var selectRequest = "{\"entry_type\":\"uploaded\",\"order_by\":[{\"sort\":\"date\",\"order\":\"desc\"}],\"limit\":20,\"offset\":0}";
 
-            var response = await CloudFunction.Post(new Request("SELECT", "user1", selectRequest));
+            var response = await CloudFunction.Post(Request.Create("SELECT", "user1", selectRequest));
             Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
             
             var selectData = JsonConvert.DeserializeObject<List<SelectResponseData>>(response.Body);

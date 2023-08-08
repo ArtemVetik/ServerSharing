@@ -1,5 +1,5 @@
-﻿using ServerSharing.Data;
-using System.Text;
+﻿using NUnit.Framework;
+using ServerSharing.Data;
 
 namespace ServerSharingTests
 {
@@ -17,7 +17,7 @@ namespace ServerSharingTests
         {
             var id = await CloudFunction.Upload("userOne", new UploadData() { Image = new byte[] { 255, 0, 255 }, Data = new byte[] { 0, 0, 0 } });
 
-            var response = await CloudFunction.Post(new Request("LOAD_IMAGE", "test_load_user", id));
+            var response = await CloudFunction.Post(Request.Create("LOAD_IMAGE", "test_load_user", id));
 
             Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
 
