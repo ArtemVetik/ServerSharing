@@ -30,8 +30,6 @@ namespace ServerSharing
                                 ORDER BY {CreateOrderBy(selectParameters.OrderBy)}
                                 LIMIT $limit OFFSET $offset;";
 
-                Console.WriteLine(query);
-
                 return await session.ExecuteDataQuery(
                     query: query,
                     txControl: TxControl.BeginSerializableRW().Commit(),

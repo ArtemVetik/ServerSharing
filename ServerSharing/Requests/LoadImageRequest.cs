@@ -1,12 +1,12 @@
 ﻿using Ydb.Sdk.Table;
-using Ydb.Sdk.Value;
 using System.Text;
+using Ydb.Sdk.Value;
 
 namespace ServerSharing
 {
-    public class DownloadRequest : BaseRequest
+    public class LoadImageRequest : BaseRequest
     {
-        public DownloadRequest(TableClient tableClient, Request request)
+        public LoadImageRequest(TableClient tableClient, Request request)
             : base(tableClient, request)
         { }
 
@@ -17,8 +17,8 @@ namespace ServerSharing
                 var query = $@"
                     DECLARE $id AS string;
 
-                    SELECT data
-                    FROM `{Tables.Data}`
+                    SELECT image
+                    FROM `{Tables.Images}`
                     WHERE id = $id;
                 ";
 
@@ -40,28 +40,7 @@ namespace ServerSharing
             if (queryResponse.Result.ResultSets[0].Rows.Count == 0)
                 throw new InvalidOperationException("Record not found!");
 
-            response = await client.SessionExec(async session =>
-            {
-                var query = $@"
-                    DECLARE $user_id AS string;
-                    DECLARE $id AS string;
-
-                    UPSERT INTO `{Tables.Downloads}` (user_id, id)
-                    VALUES ($user_id, $id);
-                ";
-
-                return await session.ExecuteDataQuery(
-                    query: query,
-                    txControl: TxControl.BeginSerializableRW().Commit(),
-                    parameters: new Dictionary<string, YdbValue>
-                    {
-                        { "$user_id", YdbValue.MakeString(Encoding.UTF8.GetBytes(request.user_id)) },
-                        { "$id", YdbValue.MakeString(Encoding.UTF8.GetBytes(request.body)) }
-                    }
-                );
-            });
-
-            var data = queryResponse.Result.ResultSets[0].Rows[0]["data"].GetOptionalString();
+            var data = queryResponse.Result.ResultSets[0].Rows[0]["image"].GetOptionalString();
 
             return new Response((uint)response.Status.StatusCode, response.Status.StatusCode.ToString(), Convert.ToBase64String(data));
         }

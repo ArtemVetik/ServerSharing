@@ -4,7 +4,7 @@ using ServerSharing;
 namespace ServerSharingTests
 {
     [TestFixture]
-    public class Test_008_SelectLikeCountTests
+    public class Test_009_SelectLikeCountTests
     {
         private string _id1;
         private string _id2;
@@ -15,8 +15,8 @@ namespace ServerSharingTests
             await CloudFunction.Clear("records");
             await CloudFunction.Clear("likes");
 
-            _id1 = await CloudFunction.Upload("user1", "{\"id\": 1}");
-            _id2 = await CloudFunction.Upload("user2", "{\"id\": 2}");
+            _id1 = await CloudFunction.Upload("user1", new UploadData() { Image = new byte[] { }, Data = new byte[] { } });
+            _id2 = await CloudFunction.Upload("user2", new UploadData() { Image = new byte[] { }, Data = new byte[] { } });
 
             await CloudFunction.Like("test_like_1", _id1);
             await CloudFunction.Like("test_like_1", _id2);

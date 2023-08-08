@@ -4,12 +4,12 @@ using ServerSharing;
 namespace ServerSharingTests
 {
     [TestFixture]
-    public class Test_009_RateTests
+    public class Test_010_RateTests
     {
         [Test]
         public async Task Rate_001_CorrectId_ShouldLike()
         {
-            var id = await CloudFunction.Upload("test_upload", "{}");
+            var id = await CloudFunction.Upload("test_upload", new UploadData() { Image = new byte[] { }, Data = new byte[] { } });
 
             var response = await CloudFunction.Post(new Request("RATE", "some_user", JsonConvert.SerializeObject(new RatingRequestBody()
             {

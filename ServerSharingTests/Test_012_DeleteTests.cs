@@ -4,7 +4,7 @@ using ServerSharing;
 namespace ServerSharingTests
 {
     [TestFixture]
-    public class Test_011_DeleteTests
+    public class Test_012_DeleteTests
     {
         [SetUp]
         public async Task Setup()
@@ -15,26 +15,28 @@ namespace ServerSharingTests
         [Test]
         public async Task Delete_001_CorrectRecord_ShouldDelete()
         {
-            var id = await CloudFunction.Upload("user1", "{}");
+            var id = await CloudFunction.Upload("user1", new UploadData() { Image = new byte[] { }, Data = new byte[] { } });
             var response = await CloudFunction.Post(new Request("DELETE", "user1", id));
-
             Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
 
             var selectData = await SelectAll();
-
             Assert.That(selectData.Count, Is.EqualTo(0));
+
+            response = await CloudFunction.Post(new Request("DOWNLOAD", "test_user", id));
+            Assert.False(response.IsSuccess, $"DOWNLOAD: {response.StatusCode}, {response.ReasonPhrase}");
+
+            response = await CloudFunction.Post(new Request("LOAD_IMAGE", "test_user", id));
+            Assert.False(response.IsSuccess, $"LOAD_IMAGE: {response.StatusCode}, {response.ReasonPhrase}");
         }
 
         [Test]
         public async Task Delete_002_InvalidUser_ShouldNotDelete()
         {
-            var id = await CloudFunction.Upload("user1", "{}");
+            var id = await CloudFunction.Upload("user1", new UploadData() { Image = new byte[] { }, Data = new byte[] { } });
             var response = await CloudFunction.Post(new Request("DELETE", "user1_1", id));
-
             Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
 
             var selectData = await SelectAll();
-
             Assert.That(selectData.Count, Is.EqualTo(1));
         }
 

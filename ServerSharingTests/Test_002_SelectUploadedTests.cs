@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using ServerSharing;
+using System.Text;
 
 namespace ServerSharingTests
 {
@@ -13,9 +14,26 @@ namespace ServerSharingTests
         public async Task Setup()
         {
             await CloudFunction.Clear("records");
-            await CloudFunction.Upload(_userOne, "{\"id\":\"someId\"}");
-            await CloudFunction.Upload(_userOne, "{\"id\":\"qwerty\"}");
-            await CloudFunction.Upload(_userTwo, "{\"id\":\"secondUser\"}");
+            await CloudFunction.Upload(_userOne, new UploadData()
+            {
+                Metadata = new RecordMetadata() { Name = "name1", Description = "empty1" },
+                Image = new byte[0],
+                Data = Encoding.UTF8.GetBytes("user1_data"),
+            });
+
+            await CloudFunction.Upload(_userOne, new UploadData()
+            {
+                Metadata = new RecordMetadata() { Name = "name2", Description = "empty2" },
+                Image = new byte[0],
+                Data = Encoding.UTF8.GetBytes("user2_data"),
+            });
+
+            await CloudFunction.Upload(_userTwo, new UploadData()
+            {
+                Metadata = new RecordMetadata() { Name = "name3", Description = "empty3" },
+                Image = new byte[0],
+                Data = Encoding.UTF8.GetBytes("user3_data"),
+            });
         }
 
         [Test]
@@ -29,8 +47,8 @@ namespace ServerSharingTests
             var selectData = JsonConvert.DeserializeObject<List<SelectResponseData>>(response.Body);
 
             Assert.That(selectData.Count, Is.EqualTo(2));
-            Assert.That(selectData.Any(data => data.Body.Contains("someId")));
-            Assert.That(selectData.Any(data => data.Body.Contains("qwerty")));
+            Assert.That(selectData.Any(data => data.Metadata.Name == "name1" && data.Metadata.Description == "empty1"));
+            Assert.That(selectData.Any(data => data.Metadata.Name == "name2" && data.Metadata.Description == "empty2"));
         }
 
         [Test]
@@ -44,7 +62,7 @@ namespace ServerSharingTests
             var selectData = JsonConvert.DeserializeObject<List<SelectResponseData>>(response.Body);
 
             Assert.That(selectData.Count, Is.EqualTo(1));
-            Assert.That(selectData.Any(data => data.Body.Contains("secondUser")));
+            Assert.That(selectData.Any(data => data.Metadata.Name == "name3" && data.Metadata.Description == "empty3"));
         }
 
         [Test]

@@ -4,7 +4,7 @@ using ServerSharing;
 namespace ServerSharingTests
 {
     [TestFixture]
-    public class Test_005_SelectDownloadCountTests
+    public class Test_006_SelectDownloadCountTests
     {
         private string _id1;
         private string _id2;
@@ -15,8 +15,8 @@ namespace ServerSharingTests
             await CloudFunction.Clear("records");
             await CloudFunction.Clear("downloads");
 
-            _id1 = await CloudFunction.Upload("user1", "{\"id\": 1}");
-            _id2 = await CloudFunction.Upload("user2", "{\"id\": 2}");
+            _id1 = await CloudFunction.Upload("user1", new UploadData() { Image = new byte[] { }, Data = new byte[] { } });
+            _id2 = await CloudFunction.Upload("user2", new UploadData() { Image = new byte[] { }, Data = new byte[] { } });
 
             await CloudFunction.Download("test_download_1", _id1);
             await CloudFunction.Download("test_download_2", _id1);

@@ -1,17 +1,51 @@
 ﻿using Ydb.Sdk.Table;
 using Ydb.Sdk.Value;
 using System.Text;
+using Amazon.DynamoDBv2.Model;
+using Amazon.DynamoDBv2;
+using System.Net;
 
 namespace ServerSharing
 {
     public class DeleteRequest : BaseRequest
     {
-        public DeleteRequest(TableClient tableClient, Request request)
+        private readonly AmazonDynamoDBClient _awsClient;
+
+        public DeleteRequest(AmazonDynamoDBClient awsClient, TableClient tableClient, Request request)
             : base(tableClient, request)
-        { }
+        { 
+            _awsClient = awsClient;
+        }
 
         protected async override Task<Response> Handle(TableClient client, Request request)
         {
+            var awsRequest = new BatchWriteItemRequest(new Dictionary<string, List<WriteRequest>>()
+            {
+                {
+                    Tables.Images, new List<WriteRequest>()
+                    {
+                         new WriteRequest(new Amazon.DynamoDBv2.Model.DeleteRequest(new Dictionary<string, AttributeValue>()
+                         {
+                             { "id", new AttributeValue() { S = request.body } }
+                         })),
+                    }
+                },
+                {
+                    Tables.Data, new List<WriteRequest>()
+                    {
+                         new WriteRequest(new Amazon.DynamoDBv2.Model.DeleteRequest(new Dictionary<string, AttributeValue>()
+                         {
+                             { "id", new AttributeValue() { S = request.body } }
+                         })),
+                    }
+                },
+            });
+
+            var awsResponse = await _awsClient.BatchWriteItemAsync(awsRequest);
+
+            if (awsResponse.HttpStatusCode != HttpStatusCode.OK)
+                throw new InvalidOperationException("Error BatchWriteItemAsync: " + awsResponse);
+
             var response = await client.SessionExec(async session =>
             {
                 var query = $@"

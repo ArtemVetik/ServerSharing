@@ -1,18 +1,62 @@
 ﻿using Ydb.Sdk.Table;
 using Ydb.Sdk.Value;
 using System.Text;
+using Newtonsoft.Json;
+using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.Model;
+using System.Net;
 
 namespace ServerSharing
 {
     public class UploadRequest : BaseRequest
     {
-        public UploadRequest(TableClient tableClient, Request request)
+        private readonly AmazonDynamoDBClient _awsClient;
+
+        public UploadRequest(AmazonDynamoDBClient awsClient, TableClient tableClient, Request request)
             : base(tableClient, request)
-        { }
+        {
+            _awsClient = awsClient;
+        }
 
         protected async override Task<Response> Handle(TableClient client, Request request)
         {
+            UploadData uploadData = ParseUploadData(request.body);
             var guid = Guid.NewGuid();
+
+            var awsRequest = new BatchWriteItemRequest(new Dictionary<string, List<WriteRequest>>()
+            {
+                {
+                    Tables.Images, new List<WriteRequest>()
+                    {
+                        new WriteRequest(new PutRequest()
+                        {
+                            Item = new Dictionary<string, AttributeValue>
+                            {
+                                { "id", new AttributeValue { S = guid.ToString()}},
+                                { "image", new AttributeValue { B = new MemoryStream(uploadData.Image) }},
+                            }
+                        })
+                    }
+                },
+                {
+                    Tables.Data, new List<WriteRequest>()
+                    {
+                        new WriteRequest(new PutRequest()
+                        {
+                            Item = new Dictionary<string, AttributeValue>
+                            {
+                                { "id", new AttributeValue { S = guid.ToString()}},
+                                { "data", new AttributeValue { B = new MemoryStream(uploadData.Data) }},
+                            }
+                        })
+                    }
+                }
+            });
+
+            var awsResponse = await _awsClient.BatchWriteItemAsync(awsRequest);
+
+            if (awsResponse.HttpStatusCode != HttpStatusCode.OK)
+                throw new InvalidOperationException("Error BatchWriteItemAsync: " + awsResponse);
 
             var response = await client.SessionExec(async session =>
             {
@@ -33,13 +77,27 @@ namespace ServerSharing
                     {
                         { "$id", YdbValue.MakeString(Encoding.UTF8.GetBytes(guid.ToString())) },
                         { "$user_id", YdbValue.MakeString(Encoding.UTF8.GetBytes(request.user_id)) },
-                        { "$body", YdbValue.MakeJson(request.body) },
+                        { "$body", YdbValue.MakeJson(JsonConvert.SerializeObject(uploadData.Metadata)) },
                         { "$date", YdbValue.MakeDatetime(DateTime.UtcNow) }
                     }
                 );
             });
 
             return new Response((uint)response.Status.StatusCode, response.Status.StatusCode.ToString(), guid.ToString());
+        }
+
+        private UploadData ParseUploadData(string body)
+        {
+            try
+            {
+                var uploadData = JsonConvert.DeserializeObject<UploadData>(body);
+
+                return uploadData ?? throw new NullReferenceException("Can't deserialize body");
+            }
+            catch (Exception exception)
+            {
+                throw new InvalidOperationException("Request body has invalid format", exception);
+            }
         }
     }
 }

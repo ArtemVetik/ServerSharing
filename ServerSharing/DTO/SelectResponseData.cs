@@ -5,7 +5,7 @@ namespace ServerSharing
     public class SelectResponseData
     {
         [JsonPropertyName("id")] public string Id { get; init; }
-        [JsonPropertyName("body")] public string Body { get; init; }
+        [JsonPropertyName("metadata")] public RecordMetadata Metadata { get; init; }
         [JsonPropertyName("datetime")] public DateTime Datetime { get; init; }
         [JsonPropertyName("downloads")] public ulong Downloads { get; init; }
         [JsonPropertyName("likes")] public ulong Likes { get; init; }
