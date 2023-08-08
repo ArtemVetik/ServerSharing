@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using ServerSharing;
+using ServerSharing.Data;
 
 namespace ServerSharingTests
 {

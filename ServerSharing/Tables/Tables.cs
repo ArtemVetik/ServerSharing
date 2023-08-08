@@ -1,4 +1,4 @@
-﻿namespace ServerSharing
+﻿namespace ServerSharing 
 {
     public static class Tables
     {

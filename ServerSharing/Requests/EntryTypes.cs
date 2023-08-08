@@ -1,4 +1,6 @@
-﻿namespace ServerSharing
+﻿using ServerSharing.Data;
+
+namespace ServerSharing
 {
     internal partial class SelectQueryFactory
     {

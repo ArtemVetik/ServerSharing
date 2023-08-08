@@ -1,5 +1,5 @@
 ﻿
-namespace ServerSharing
+namespace ServerSharing.Data
 {
     public enum Order
     {

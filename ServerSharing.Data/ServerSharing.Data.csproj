@@ -1,22 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AWSSDK.Core" Version="3.7.200.10" />
-    <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.200.11" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Yandex.Cloud.SDK" Version="1.2.0" />
     <PackageReference Include="Ydb.Sdk" Version="0.0.5" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\ServerSharing.Data\ServerSharing.Data.csproj" />
   </ItemGroup>
 
 </Project>

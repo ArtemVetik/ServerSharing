@@ -1,4 +1,4 @@
-﻿namespace ServerSharing
+﻿namespace ServerSharing.Data
 {
     public class Response
     {

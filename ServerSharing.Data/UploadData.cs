@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace ServerSharing
+namespace ServerSharing.Data
 {
     [Serializable]
     public class UploadData

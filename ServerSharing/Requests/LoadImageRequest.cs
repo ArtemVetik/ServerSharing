@@ -1,6 +1,7 @@
 ﻿using Ydb.Sdk.Table;
 using System.Text;
 using Ydb.Sdk.Value;
+using ServerSharing.Data;
 
 namespace ServerSharing
 {

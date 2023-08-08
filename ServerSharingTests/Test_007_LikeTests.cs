@@ -1,4 +1,4 @@
-﻿using ServerSharing;
+﻿using ServerSharing.Data;
 
 namespace ServerSharingTests
 {

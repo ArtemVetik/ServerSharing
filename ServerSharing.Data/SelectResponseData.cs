@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace ServerSharing
+namespace ServerSharing.Data
 {
     public class SelectResponseData
     {

@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using System.Net;
+using ServerSharing.Data;
 
 namespace ServerSharing
 {

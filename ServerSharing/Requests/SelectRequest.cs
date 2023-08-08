@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using Ydb.Sdk.Table;
 using Ydb.Sdk.Value;
+using ServerSharing.Data;
 
 namespace ServerSharing
 {
