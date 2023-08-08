@@ -1,4 +1,6 @@
 ﻿using ServerSharing;
+using System.Text;
+using Ydb.Sdk.Client;
 
 namespace ServerSharingTests
 {
@@ -16,10 +18,10 @@ namespace ServerSharingTests
             await CloudFunction.Clear("records");
             await CloudFunction.Clear("downloads");
 
-            _userOne1 = await CloudFunction.Upload("userOne", "{\"data\":123}");
-            _userTwo1 = await CloudFunction.Upload("userTwo", "{\"name\":\"Joe\"}");
-            _userTwo2 = await CloudFunction.Upload("userTwo", "{}");
-            _userThree1 = await CloudFunction.Upload("userThree", "{\"record_id\": 1234567890}");
+            _userOne1 = await CloudFunction.Upload("userOne", new UploadData() { Image = new byte[] { }, Data = Encoding.UTF8.GetBytes("data_userOne") });
+            _userTwo1 = await CloudFunction.Upload("userTwo", new UploadData() { Image = new byte[] { }, Data = Encoding.UTF8.GetBytes("data_userTwo1") });
+            _userTwo2 = await CloudFunction.Upload("userTwo", new UploadData() { Image = new byte[] { }, Data = Encoding.UTF8.GetBytes("data_userTwo2") });
+            _userThree1 = await CloudFunction.Upload("userThree", new UploadData() { Image = new byte[] { }, Data = Encoding.UTF8.GetBytes("data_userThree") });
         }
 
         [Test]
@@ -28,12 +30,12 @@ namespace ServerSharingTests
             var response = await CloudFunction.Post(new Request("DOWNLOAD", "test_download_1", _userOne1));
 
             Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
-            Assert.That(response.Body == "{\"data\":123}", $"Actual body: {response.Body}");
+            Assert.That(EncodeBody(response.Body), Is.EqualTo("data_userOne"));
 
             response = await CloudFunction.Post(new Request("DOWNLOAD", "test_download_2", _userTwo2));
 
             Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
-            Assert.That(response.Body == "{}", $"Actual body: {response.Body}");
+            Assert.That(EncodeBody(response.Body), Is.EqualTo("data_userTwo2"));
         }
 
         [Test]
@@ -42,12 +44,12 @@ namespace ServerSharingTests
             var response = await CloudFunction.Post(new Request("DOWNLOAD", "test_download_3", _userThree1));
 
             Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
-            Assert.That(response.Body == "{\"record_id\": 1234567890}", $"Actual body: {response.Body}");
+            Assert.That(EncodeBody(response.Body), Is.EqualTo("data_userThree"));
 
             response = await CloudFunction.Post(new Request("DOWNLOAD", "test_download_3", _userThree1));
 
             Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
-            Assert.That(response.Body == "{\"record_id\": 1234567890}", $"Actual body: {response.Body}");
+            Assert.That(EncodeBody(response.Body), Is.EqualTo("data_userThree"));
         }
 
         [Test]
@@ -56,6 +58,11 @@ namespace ServerSharingTests
             var response = await CloudFunction.Post(new Request("DOWNLOAD", "test_download_4", "invalid_id"));
 
             Assert.False(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
+        }
+
+        private string EncodeBody(string body)
+        {
+            return Encoding.UTF8.GetString(Convert.FromBase64String(body));
         }
     }
 }

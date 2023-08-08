@@ -4,7 +4,7 @@ using ServerSharing;
 namespace ServerSharingTests
 {
     [TestFixture]
-    public class Test_007_SelectLikeTests
+    public class Test_008_SelectLikeTests
     {
         [OneTimeSetUp]
         public async Task Setup()
@@ -12,16 +12,16 @@ namespace ServerSharingTests
             await CloudFunction.Clear("records");
             await CloudFunction.Clear("likes");
 
-            var id = await CloudFunction.Upload("user1", "{\"id\": 1}");
+            var id = await CloudFunction.Upload("user1", new UploadData() { Metadata = new RecordMetadata() { Name = "User1" }, Image = new byte[] { }, Data = new byte[] { } });
             await CloudFunction.Like("test_download_1", id);
 
-            id = await CloudFunction.Upload("user2", "{\"id\": 2}");
+            id = await CloudFunction.Upload("user2", new UploadData() { Metadata = new RecordMetadata() { Name = "User2" }, Image = new byte[] { }, Data = new byte[] { } });
             await CloudFunction.Like("test_download_2", id);
 
-            id = await CloudFunction.Upload("user3", "{\"id\": 3}");
+            id = await CloudFunction.Upload("user3", new UploadData() {Metadata = new RecordMetadata() { Name = "User3" }, Image = new byte[] { }, Data = new byte[] { } });
             await CloudFunction.Like("test_download_1", id);
 
-            id = await CloudFunction.Upload("user4", "{\"id\": 4}");
+            id = await CloudFunction.Upload("user4", new UploadData() {Metadata = new RecordMetadata() { Name = "User4" }, Image = new byte[] { }, Data = new byte[] { } });
             await CloudFunction.Like("test_download_3", id);
         }
 
@@ -35,8 +35,8 @@ namespace ServerSharingTests
 
             var selectData = JsonConvert.DeserializeObject<List<SelectResponseData>>(response.Body);
             Assert.That(selectData.Count, Is.EqualTo(2));
-            Assert.That(selectData.Any(data => data.Body == "{\"id\": 1}"));
-            Assert.That(selectData.Any(data => data.Body == "{\"id\": 3}"));
+            Assert.That(selectData.Any(data => data.Metadata.Name == "User1"));
+            Assert.That(selectData.Any(data => data.Metadata.Name == "User3"));
 
             response = await CloudFunction.Post(new Request("SELECT", "test_download_3", selectRequest));
 
@@ -44,7 +44,7 @@ namespace ServerSharingTests
 
             selectData = JsonConvert.DeserializeObject<List<SelectResponseData>>(response.Body);
             Assert.That(selectData.Count, Is.EqualTo(1));
-            Assert.That(selectData.Any(data => data.Body == "{\"id\": 4}"));
+            Assert.That(selectData.Any(data => data.Metadata.Name == "User4"));
         }
 
         [Test]

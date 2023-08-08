@@ -3,6 +3,8 @@ using Ydb.Sdk;
 using Ydb.Sdk.Table;
 using Yandex.Cloud.Credentials;
 using Yandex.Cloud.Functions;
+using Amazon.DynamoDBv2;
+using Amazon;
 
 namespace ServerSharing
 {
@@ -20,17 +22,29 @@ namespace ServerSharing
             await driver.Initialize();
 
             using var tableClient = new TableClient(driver, new TableClientConfig());
+            
+            var awsConfig = new AmazonDynamoDBConfig()
+            {
+                RegionEndpoint = RegionEndpoint.EUCentral1,
+                EndpointProvider = new EndpointProvider(),
+            };
+
+            var awsAccessKeyId = Environment.GetEnvironmentVariable("awsAccessKeyId");
+            var awsSecretAccessKey = Environment.GetEnvironmentVariable("awsSecretAccessKey");
+
+            using var awsClient = new AmazonDynamoDBClient(awsAccessKeyId, awsSecretAccessKey, awsConfig);
 
             BaseRequest requestHandler = request.method switch
             {
-                "UPLOAD" => new UploadRequest(tableClient, request),
-                "DELETE" => new DeleteRequest(tableClient, request),
+                "UPLOAD" => new UploadRequest(awsClient, tableClient, request),
+                "DELETE" => new DeleteRequest(awsClient, tableClient, request),
+                "LOAD_IMAGE" => new LoadImageRequest(tableClient, request),
                 "DOWNLOAD" => new DownloadRequest(tableClient, request),
                 "SELECT" => new SelectRequest(tableClient, request),
                 "LIKE" => new LikeRequest(tableClient, request),
                 "RATE" => new RateRequest(tableClient, request),
 #if TEST_ENVIRONMENT
-                "CLEAR" => new ClearRequest(tableClient, request),
+                "CLEAR" => new ClearRequest(awsClient, tableClient, request),
 #endif
                 _ => throw new InvalidOperationException($"Method {request.method} not found")
             };

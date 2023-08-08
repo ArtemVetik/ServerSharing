@@ -4,7 +4,7 @@ using ServerSharing;
 namespace ServerSharingTests
 {
     [TestFixture]
-    public class Test_010_SelectRatingCountAndAvgTests
+    public class Test_011_SelectRatingCountAndAvgTests
     {
         private string _id1;
         private string _id2;
@@ -15,8 +15,8 @@ namespace ServerSharingTests
             await CloudFunction.Clear("records");
             await CloudFunction.Clear("rating");
 
-            _id1 = await CloudFunction.Upload("user1", "{\"id\": 1}");
-            _id2 = await CloudFunction.Upload("user2", "{\"id\": 2}");
+            _id1 = await CloudFunction.Upload("user1", new UploadData() { Image = new byte[] { }, Data = new byte[] { } });
+            _id2 = await CloudFunction.Upload("user2", new UploadData() { Image = new byte[] { }, Data = new byte[] { } });
 
             await CloudFunction.Rate("test_rate_1", _id1, 1);
             await CloudFunction.Rate("test_rate_2", _id2, 4);
@@ -55,8 +55,8 @@ namespace ServerSharingTests
             
             var selectData = JsonConvert.DeserializeObject<List<SelectResponseData>>(response.Body);
 
-            Assert.That(selectData[0].RatingCount == 2, $"Actual rating count: {selectData[0].RatingCount}");
-            Assert.That(selectData[0].RatingAverage == 2f, $"Actual rating average: {selectData[0].RatingAverage}");
+            Assert.That(selectData[0].RatingCount, Is.EqualTo(2));
+            Assert.That(selectData[0].RatingAverage, Is.EqualTo(2f));
         }
     }
 }

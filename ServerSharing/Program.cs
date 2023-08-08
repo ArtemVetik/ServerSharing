@@ -4,7 +4,8 @@ namespace ServerSharing
 {
     public class Program
     {
-        private static readonly HttpClient client = new HttpClient();
+        private static readonly HttpClient _client = new();
+
         public static async Task Main(string[] args)
         {
             var body = new SelectRequestBody()
@@ -22,7 +23,7 @@ namespace ServerSharing
             var request = new Request("SELECT", "thisUser", JsonConvert.SerializeObject(body));
             var content = new StringContent(JsonConvert.SerializeObject(request));
 
-            var response = await client.PostAsync("https://functions.yandexcloud.net/d4eva0ud0d8cncdqa8uv?integration=raw", content);
+            var response = await _client.PostAsync("https://functions.yandexcloud.net/d4eva0ud0d8cncdqa8uv?integration=raw", content);
 
             var responseString = await response.Content.ReadAsStringAsync();
 

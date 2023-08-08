@@ -1,5 +1,7 @@
 using Newtonsoft.Json;
 using ServerSharing;
+using System.Text;
+using System.Text.Unicode;
 
 namespace ServerSharingTests
 {
@@ -8,24 +10,45 @@ namespace ServerSharingTests
     {
         private readonly string _userName = "test_user";
 
+        private UploadData _uploadData;
+
         [OneTimeSetUp]
         public async Task ClearRecords()
         {
             await CloudFunction.Clear("records");
+
+            _uploadData = new UploadData()
+            {
+                Metadata = new RecordMetadata()
+                {
+                    Name = "Joe",
+                    Description = "My description",
+                },
+                Image = new byte[] { },
+                Data = Encoding.UTF8.GetBytes("some_data"),
+            };
         }
 
-        [Test, Order(1)]
-        public async Task Upload_001_EmptyRecord_ShouldSuccess()
+        [Test]
+        public async Task Upload_001_CorrectJson_ShouldSuccess()
         {
-            var response = await CloudFunction.Post(new Request("UPLOAD", _userName, "{}"));
+            var response = await CloudFunction.Post(new Request("UPLOAD", _userName, JsonConvert.SerializeObject(_uploadData)));
+
             Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
 
             var records = await SelectAll();
             Assert.That(records.Count, Is.EqualTo(1));
         }
 
-        [Test, Order(2)]
-        public async Task Upload_002_WrongJsonRecord_ShouldNotSuccess()
+        [Test]
+        public async Task Upload_002_EmptyJson_ShouldError()
+        {
+            var response = await CloudFunction.Post(new Request("UPLOAD", _userName, "{}"));
+            Assert.False(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
+        }
+
+        [Test]
+        public async Task Upload_003_WrongJsonRecord_ShouldNotSuccess()
         {
             var response = await CloudFunction.Post(new Request("UPLOAD", _userName, "abracadabra"));
             Assert.False(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
@@ -34,41 +57,33 @@ namespace ServerSharingTests
             Assert.That(records.Count, Is.EqualTo(1));
         }
 
-        [Test, Order(3)]
-        public async Task Upload_003_SameRecord_IdMustBeDifferent()
+        [Test]
+        public async Task Upload_004_SameRecord_IdMustBeDifferent()
         {
-            var response = await CloudFunction.Post(new Request("UPLOAD", _userName, "{}"));
+            var response = await CloudFunction.Post(new Request("UPLOAD", _userName, JsonConvert.SerializeObject(_uploadData)));
+
             Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
 
             var records = await SelectAll();
 
             Assert.That(records.Count, Is.EqualTo(2));
-            Assert.That(records.Count, Is.EqualTo(records.Distinct().Count()));
+            Assert.That(records[0].Id, Is.Not.EqualTo(records[1].Id));
         }
 
-        [Test, Order(4)]
-        public async Task Upload_004_OtherUserSameRecord_AllIdMustBeDifferent()
+        [Test]
+        public async Task Upload_005_OtherUserSameRecord_AllIdMustBeDifferent()
         {
-            var response = await CloudFunction.Post(new Request("UPLOAD", _userName + "_2", "{}"));
+            var response = await CloudFunction.Post(new Request("UPLOAD", _userName + "_2", JsonConvert.SerializeObject(_uploadData)));
+
             Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
 
             var records = await SelectAll();
 
             Assert.That(records.Count, Is.EqualTo(3));
-            Assert.That(records.Count, Is.EqualTo(records.Distinct().Count()));
-        }
 
-        [Test, Order(5)]
-        public async Task Upload_005_ComplexJsonRecord_ShouldCorrectAdd()
-        {
-            var jsonString = "{\"entry_type\":1,\"order_by\":[{\"sort\":4,\"order\":0},{\"sort\":3,\"order\":0}],\"limit\":20,\"offset\":0}";
-            var response = await CloudFunction.Post(new Request("UPLOAD", _userName + "_2", jsonString));
-            Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
-
-            var records = await SelectAll();
-
-            Assert.That(records.Count, Is.EqualTo(4));
-            Assert.That(records.Count, Is.EqualTo(records.Distinct().Count()));
+            for (int i = 0; i < records.Count; i++)
+                for (int j = i + 1; j < records.Count; j++)
+                    Assert.That(records[i].Id, Is.Not.EqualTo(records[j].Id));
         }
 
         private async Task<List<SelectResponseData>> SelectAll()
@@ -76,7 +91,7 @@ namespace ServerSharingTests
             var response = await CloudFunction.Post(new Request("SELECT", _userName, JsonConvert.SerializeObject(new SelectRequestBody()
             {
                 EntryType = EntryType.All,
-                OrderBy = new SelectRequestBody.SelectOrderBy[] { new SelectRequestBody.SelectOrderBy() { Sort = Sort.Date, Order = Order.Desc} },
+                OrderBy = new SelectRequestBody.SelectOrderBy[] { new SelectRequestBody.SelectOrderBy() { Sort = Sort.Date, Order = Order.Desc } },
                 Limit = 100,
                 Offset = 0,
             })));
