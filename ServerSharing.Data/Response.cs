@@ -9,9 +9,9 @@
             ReasonPhrase = reasonPhrase;
         }
 
-        public bool IsSuccess => StatusCode == (uint)Ydb.Sdk.StatusCode.Success;
-        public uint StatusCode { get; init; }
-        public string ReasonPhrase { get; init; }
-        public string Body { get; init; }
+        public bool IsSuccess => StatusCode == 400000u;
+        public uint StatusCode { get; private set; }
+        public string ReasonPhrase { get; private set; }
+        public string Body { get; private set; }
     }
 }

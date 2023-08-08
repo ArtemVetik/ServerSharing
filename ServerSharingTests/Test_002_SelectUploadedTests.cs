@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using NUnit.Framework;
 using ServerSharing.Data;
 using System.Text;
 
@@ -40,7 +41,7 @@ namespace ServerSharingTests
         public async Task Select_001_UserOne_ShouldCorrectCount()
         {
             var selectRequest = "{\"entry_type\":\"uploaded\",\"order_by\":[{\"sort\":\"date\",\"order\":\"desc\"}],\"limit\":20,\"offset\":0}";
-            var response = await CloudFunction.Post(new Request("SELECT", _userOne, selectRequest));
+            var response = await CloudFunction.Post(Request.Create("SELECT", _userOne, selectRequest));
 
             Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
 
@@ -55,7 +56,7 @@ namespace ServerSharingTests
         public async Task Select_002_UserTwo_ShouldCorrectCount()
         {
             var selectRequest = "{\"entry_type\":\"uploaded\",\"order_by\":[{\"sort\":\"date\",\"order\":\"desc\"}],\"limit\":20,\"offset\":0}";
-            var response = await CloudFunction.Post(new Request("SELECT", _userTwo, selectRequest));
+            var response = await CloudFunction.Post(Request.Create("SELECT", _userTwo, selectRequest));
 
             Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
 
@@ -69,7 +70,7 @@ namespace ServerSharingTests
         public async Task Select_003_UnknownUser_SouldEmptyData()
         {
             var selectRequest = "{\"entry_type\":\"uploaded\",\"order_by\":[{\"sort\":\"date\",\"order\":\"desc\"}],\"limit\":20,\"offset\":0}";
-            var response = await CloudFunction.Post(new Request("SELECT", "unknown", selectRequest));
+            var response = await CloudFunction.Post(Request.Create("SELECT", "unknown", selectRequest));
 
             Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
 

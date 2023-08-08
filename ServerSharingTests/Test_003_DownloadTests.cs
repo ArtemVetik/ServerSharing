@@ -1,6 +1,6 @@
-﻿using ServerSharing.Data;
+﻿using NUnit.Framework;
+using ServerSharing.Data;
 using System.Text;
-using Ydb.Sdk.Client;
 
 namespace ServerSharingTests
 {
@@ -27,12 +27,12 @@ namespace ServerSharingTests
         [Test]
         public async Task Download_001_FewUsers_SouldCorrectData()
         {
-            var response = await CloudFunction.Post(new Request("DOWNLOAD", "test_download_1", _userOne1));
+            var response = await CloudFunction.Post(Request.Create("DOWNLOAD", "test_download_1", _userOne1));
 
             Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
             Assert.That(EncodeBody(response.Body), Is.EqualTo("data_userOne"));
 
-            response = await CloudFunction.Post(new Request("DOWNLOAD", "test_download_2", _userTwo2));
+            response = await CloudFunction.Post(Request.Create("DOWNLOAD", "test_download_2", _userTwo2));
 
             Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
             Assert.That(EncodeBody(response.Body), Is.EqualTo("data_userTwo2"));
@@ -41,12 +41,12 @@ namespace ServerSharingTests
         [Test]
         public async Task Download_002_TwiceDownload_SouldReturnSameData()
         {
-            var response = await CloudFunction.Post(new Request("DOWNLOAD", "test_download_3", _userThree1));
+            var response = await CloudFunction.Post(Request.Create("DOWNLOAD", "test_download_3", _userThree1));
 
             Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
             Assert.That(EncodeBody(response.Body), Is.EqualTo("data_userThree"));
 
-            response = await CloudFunction.Post(new Request("DOWNLOAD", "test_download_3", _userThree1));
+            response = await CloudFunction.Post(Request.Create("DOWNLOAD", "test_download_3", _userThree1));
 
             Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
             Assert.That(EncodeBody(response.Body), Is.EqualTo("data_userThree"));
@@ -55,7 +55,7 @@ namespace ServerSharingTests
         [Test]
         public async Task Download_003_InvalidId_SouldBeNotSuccess()
         {
-            var response = await CloudFunction.Post(new Request("DOWNLOAD", "test_download_4", "invalid_id"));
+            var response = await CloudFunction.Post(Request.Create("DOWNLOAD", "test_download_4", "invalid_id"));
 
             Assert.False(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
         }

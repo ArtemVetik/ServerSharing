@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using NUnit.Framework;
 using ServerSharing.Data;
 
 namespace ServerSharingTests
@@ -28,12 +29,12 @@ namespace ServerSharingTests
         {
             var selectRequest = "{\"entry_type\":\"uploaded\",\"order_by\":[{\"sort\":\"date\",\"order\":\"desc\"}],\"limit\":20,\"offset\":0}";
 
-            var response = await CloudFunction.Post(new Request("SELECT", "user1", selectRequest));
+            var response = await CloudFunction.Post(Request.Create("SELECT", "user1", selectRequest));
             Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
             var selectData = JsonConvert.DeserializeObject<List<SelectResponseData>>(response.Body);
             Assert.That(selectData[0].Likes, Is.EqualTo(2));
 
-            response = await CloudFunction.Post(new Request("SELECT", "user2", selectRequest));
+            response = await CloudFunction.Post(Request.Create("SELECT", "user2", selectRequest));
             Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
             selectData = JsonConvert.DeserializeObject<List<SelectResponseData>>(response.Body);
             Assert.That(selectData[0].Likes, Is.EqualTo(1));
@@ -44,12 +45,12 @@ namespace ServerSharingTests
         {
             var selectRequest = "{\"entry_type\":\"liked\",\"order_by\":[{\"sort\":\"date\",\"order\":\"desc\"}],\"limit\":20,\"offset\":0}";
             
-            var response = await CloudFunction.Post(new Request("SELECT", "test_like_1", selectRequest));
+            var response = await CloudFunction.Post(Request.Create("SELECT", "test_like_1", selectRequest));
             Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
             var selectData = JsonConvert.DeserializeObject<List<SelectResponseData>>(response.Body);
             Assert.That(selectData[0].Likes, Is.EqualTo(2));
 
-            response = await CloudFunction.Post(new Request("SELECT", "test_like_2", selectRequest));
+            response = await CloudFunction.Post(Request.Create("SELECT", "test_like_2", selectRequest));
             Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
             selectData = JsonConvert.DeserializeObject<List<SelectResponseData>>(response.Body);
             Assert.That(selectData[0].Likes == 1, $"Actual likes: {selectData[0].Likes}");
@@ -62,7 +63,7 @@ namespace ServerSharingTests
             await CloudFunction.Like("test_like_2", _id1);
 
             var selectRequest = "{\"entry_type\":\"liked\",\"order_by\":[{\"sort\":\"date\",\"order\":\"desc\"}],\"limit\":20,\"offset\":0}";
-            var response = await CloudFunction.Post(new Request("SELECT", "test_like_1", selectRequest));
+            var response = await CloudFunction.Post(Request.Create("SELECT", "test_like_1", selectRequest));
 
             Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
 

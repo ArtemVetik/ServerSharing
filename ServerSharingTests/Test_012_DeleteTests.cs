@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using NUnit.Framework;
 using ServerSharing.Data;
 
 namespace ServerSharingTests
@@ -16,16 +17,16 @@ namespace ServerSharingTests
         public async Task Delete_001_CorrectRecord_ShouldDelete()
         {
             var id = await CloudFunction.Upload("user1", new UploadData() { Image = new byte[] { }, Data = new byte[] { } });
-            var response = await CloudFunction.Post(new Request("DELETE", "user1", id));
+            var response = await CloudFunction.Post(Request.Create("DELETE", "user1", id));
             Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
 
             var selectData = await SelectAll();
             Assert.That(selectData.Count, Is.EqualTo(0));
 
-            response = await CloudFunction.Post(new Request("DOWNLOAD", "test_user", id));
+            response = await CloudFunction.Post(Request.Create("DOWNLOAD", "test_user", id));
             Assert.False(response.IsSuccess, $"DOWNLOAD: {response.StatusCode}, {response.ReasonPhrase}");
 
-            response = await CloudFunction.Post(new Request("LOAD_IMAGE", "test_user", id));
+            response = await CloudFunction.Post(Request.Create("LOAD_IMAGE", "test_user", id));
             Assert.False(response.IsSuccess, $"LOAD_IMAGE: {response.StatusCode}, {response.ReasonPhrase}");
         }
 
@@ -33,7 +34,7 @@ namespace ServerSharingTests
         public async Task Delete_002_InvalidUser_ShouldNotDelete()
         {
             var id = await CloudFunction.Upload("user1", new UploadData() { Image = new byte[] { }, Data = new byte[] { } });
-            var response = await CloudFunction.Post(new Request("DELETE", "user1_1", id));
+            var response = await CloudFunction.Post(Request.Create("DELETE", "user1_1", id));
             Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
 
             var selectData = await SelectAll();
@@ -43,7 +44,7 @@ namespace ServerSharingTests
         private async Task<List<SelectResponseData>> SelectAll()
         {
             var selectRequest = "{\"entry_type\":\"all\",\"order_by\":[{\"sort\":\"date\",\"order\":\"desc\"}],\"limit\":20,\"offset\":0}";
-            var response = await CloudFunction.Post(new Request("SELECT", "test_user", selectRequest));
+            var response = await CloudFunction.Post(Request.Create("SELECT", "test_user", selectRequest));
 
             if (response.IsSuccess == false)
                 throw new InvalidOperationException("Select error: " + response);

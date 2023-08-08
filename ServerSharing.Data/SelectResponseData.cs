@@ -1,15 +1,16 @@
-﻿using System.Text.Json.Serialization;
+﻿using System;
+using Newtonsoft.Json;
 
 namespace ServerSharing.Data
 {
     public class SelectResponseData
     {
-        [JsonPropertyName("id")] public string Id { get; init; }
-        [JsonPropertyName("metadata")] public RecordMetadata Metadata { get; init; }
-        [JsonPropertyName("datetime")] public DateTime Datetime { get; init; }
-        [JsonPropertyName("downloads")] public ulong Downloads { get; init; }
-        [JsonPropertyName("likes")] public ulong Likes { get; init; }
-        [JsonPropertyName("rating_count")] public ulong RatingCount { get; init; }
-        [JsonPropertyName("rating_average")] public double RatingAverage { get; init; }
+        [JsonProperty("id")] public string Id { get; set; }
+        [JsonProperty("metadata")] public RecordMetadata Metadata { get; set; }
+        [JsonProperty("datetime")] public DateTime Datetime { get; set; }
+        [JsonProperty("downloads")] public ulong Downloads { get; set; }
+        [JsonProperty("likes")] public ulong Likes { get; set; }
+        [JsonProperty("rating_count")] public ulong RatingCount { get; set; }
+        [JsonProperty("rating_average")] public double RatingAverage { get; set; }
     }
 }

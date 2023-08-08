@@ -1,7 +1,7 @@
 using Newtonsoft.Json;
+using NUnit.Framework;
 using ServerSharing.Data;
 using System.Text;
-using System.Text.Unicode;
 
 namespace ServerSharingTests
 {
@@ -32,7 +32,7 @@ namespace ServerSharingTests
         [Test]
         public async Task Upload_001_CorrectJson_ShouldSuccess()
         {
-            var response = await CloudFunction.Post(new Request("UPLOAD", _userName, JsonConvert.SerializeObject(_uploadData)));
+            var response = await CloudFunction.Post(Request.Create("UPLOAD", _userName, JsonConvert.SerializeObject(_uploadData)));
 
             Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
 
@@ -43,14 +43,14 @@ namespace ServerSharingTests
         [Test]
         public async Task Upload_002_EmptyJson_ShouldError()
         {
-            var response = await CloudFunction.Post(new Request("UPLOAD", _userName, "{}"));
+            var response = await CloudFunction.Post(Request.Create("UPLOAD", _userName, "{}"));
             Assert.False(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
         }
 
         [Test]
         public async Task Upload_003_WrongJsonRecord_ShouldNotSuccess()
         {
-            var response = await CloudFunction.Post(new Request("UPLOAD", _userName, "abracadabra"));
+            var response = await CloudFunction.Post(Request.Create("UPLOAD", _userName, "abracadabra"));
             Assert.False(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
 
             var records = await SelectAll();
@@ -60,7 +60,7 @@ namespace ServerSharingTests
         [Test]
         public async Task Upload_004_SameRecord_IdMustBeDifferent()
         {
-            var response = await CloudFunction.Post(new Request("UPLOAD", _userName, JsonConvert.SerializeObject(_uploadData)));
+            var response = await CloudFunction.Post(Request.Create("UPLOAD", _userName, JsonConvert.SerializeObject(_uploadData)));
 
             Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
 
@@ -73,7 +73,7 @@ namespace ServerSharingTests
         [Test]
         public async Task Upload_005_OtherUserSameRecord_AllIdMustBeDifferent()
         {
-            var response = await CloudFunction.Post(new Request("UPLOAD", _userName + "_2", JsonConvert.SerializeObject(_uploadData)));
+            var response = await CloudFunction.Post(Request.Create("UPLOAD", _userName + "_2", JsonConvert.SerializeObject(_uploadData)));
 
             Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
 
@@ -88,7 +88,7 @@ namespace ServerSharingTests
 
         private async Task<List<SelectResponseData>> SelectAll()
         {
-            var response = await CloudFunction.Post(new Request("SELECT", _userName, JsonConvert.SerializeObject(new SelectRequestBody()
+            var response = await CloudFunction.Post(Request.Create("SELECT", _userName, JsonConvert.SerializeObject(new SelectRequestBody()
             {
                 EntryType = EntryType.All,
                 OrderBy = new SelectRequestBody.SelectOrderBy[] { new SelectRequestBody.SelectOrderBy() { Sort = Sort.Date, Order = Order.Desc } },
