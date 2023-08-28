@@ -5,7 +5,7 @@ namespace ServerSharingTests
 {
     public static class CloudFunction
     {
-        private static readonly string FunctionId = "d4eva0ud0d8cncdqa8uv";
+        private static readonly string FunctionId = "d4e2m4vp43u2gjs1an5h";
         private static readonly HttpClient client = new();
 
         public static async Task<Response> Post(Request request)
