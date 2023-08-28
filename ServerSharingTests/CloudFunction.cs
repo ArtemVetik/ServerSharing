@@ -68,5 +68,13 @@ namespace ServerSharingTests
             if (response.IsSuccess == false)
                 throw new InvalidOperationException($"Upload error: {response.Body}");
         }
+
+        public static async Task Delete(string userId, string id)
+        {
+            var response = await CloudFunction.Post(Request.Create("DELETE", userId, id));
+
+            if (response.IsSuccess == false)
+                throw new InvalidOperationException($"Upload error: {response.Body}");
+        }
     }
 }

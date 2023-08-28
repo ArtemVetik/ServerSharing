@@ -46,6 +46,7 @@ namespace ServerSharing
                     "SELECT" => new SelectRequest(tableClient, request),
                     "LIKE" => new LikeRequest(tableClient, request),
                     "RATE" => new RateRequest(tableClient, request),
+                    "COUNT" => new CountRequest(tableClient, request),
 #if TEST_ENVIRONMENT
                 "CLEAR" => new ClearRequest(awsClient, tableClient, request),
 #endif
