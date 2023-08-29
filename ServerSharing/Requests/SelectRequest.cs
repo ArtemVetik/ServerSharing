@@ -40,6 +40,7 @@ namespace ServerSharing
                     Likes = likesCount.TypeId == YdbTypeId.OptionalType ? (likesCount.GetOptionalUint64() ?? 0) : likesCount.GetUint64(),
                     RatingCount = ratingsCount.TypeId == YdbTypeId.OptionalType ? (ratingsCount.GetOptionalUint64() ?? 0) : ratingsCount.GetUint64(),
                     RatingAverage = ratingsAverage.TypeId == YdbTypeId.OptionalType ? (ratingsAverage.GetOptionalDouble() ?? 0) : ratingsAverage.GetDouble(),
+                    MyLike = row["myLike"].GetBool(),
                 });
             }
 

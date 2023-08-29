@@ -48,12 +48,13 @@ namespace ServerSharingTests
             var response = await CloudFunction.Post(Request.Create("SELECT", "test_like_1", selectRequest));
             Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
             var selectData = JsonConvert.DeserializeObject<List<SelectResponseData>>(response.Body);
-            Assert.That(selectData[0].Likes, Is.EqualTo(2));
+            Assert.That(selectData.First(data => data.Id == _id1).Likes, Is.EqualTo(2));
+            Assert.That(selectData.First(data => data.Id == _id2).Likes, Is.EqualTo(1));
 
             response = await CloudFunction.Post(Request.Create("SELECT", "test_like_2", selectRequest));
             Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
             selectData = JsonConvert.DeserializeObject<List<SelectResponseData>>(response.Body);
-            Assert.That(selectData[0].Likes == 1, $"Actual likes: {selectData[0].Likes}");
+            Assert.That(selectData[0].Likes, Is.EqualTo(2));
         }
 
         [Test]
@@ -69,7 +70,8 @@ namespace ServerSharingTests
 
             var selectData = JsonConvert.DeserializeObject<List<SelectResponseData>>(response.Body);
 
-            Assert.That(selectData[0].Likes, Is.EqualTo(2));
+            Assert.That(selectData.First(data => data.Id == _id1).Likes, Is.EqualTo(2));
+            Assert.That(selectData.First(data => data.Id == _id2).Likes, Is.EqualTo(1));
         }
     }
 }

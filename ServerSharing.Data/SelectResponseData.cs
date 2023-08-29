@@ -12,5 +12,6 @@ namespace ServerSharing.Data
         [JsonProperty("likes")] public ulong Likes { get; set; }
         [JsonProperty("rating_count")] public ulong RatingCount { get; set; }
         [JsonProperty("rating_average")] public double RatingAverage { get; set; }
+        [JsonProperty("my_like")] public bool MyLike { get; set; }
     }
 }
