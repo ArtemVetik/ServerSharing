@@ -32,17 +32,23 @@ namespace ServerSharingTests
         [Test]
         public async Task Download_001_CorrectUser_ShouldCorrectBody()
         {
-            var selectRequest = "{\"entry_type\":\"downloaded\",\"order_by\":[{\"sort\":\"date\",\"order\":\"desc\"}],\"limit\":20,\"offset\":0}";
-            var response = await CloudFunction.Post(Request.Create("SELECT", "test_download_1", selectRequest));
-
-            Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
+            var selectRequest = new SelectRequestBody()
+            {
+                EntryType = EntryType.Downloaded,
+                OrderBy = new SelectRequestBody.SelectOrderBy[] { new SelectRequestBody.SelectOrderBy() { Order = Order.Desc, Sort = Sort.Date } },
+                Limit = 20,
+                Offset = 0
+            };
+            var response = await CloudFunction.Post(Request.Create("SELECT", "test_download_1", JsonConvert.SerializeObject(selectRequest)));
+            TestContext.WriteLine(response.Body);
+            Assert.That(response.IsSuccess, Is.True);
 
             var selectData = JsonConvert.DeserializeObject<List<SelectResponseData>>(response.Body);
             Assert.That(selectData, Has.Count.EqualTo(2));
             Assert.That(selectData.Any(data => data.Metadata.Name == "User1"));
             Assert.That(selectData.Any(data => data.Metadata.Name == "User3"));
 
-            response = await CloudFunction.Post(Request.Create("SELECT", "test_download_3", selectRequest));
+            response = await CloudFunction.Post(Request.Create("SELECT", "test_download_3", JsonConvert.SerializeObject(selectRequest)));
 
             Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
 
@@ -54,13 +60,45 @@ namespace ServerSharingTests
         [Test]
         public async Task Download_002_UnknownUser_ShouldReturnEmptyData()
         {
-            var selectRequest = "{\"entry_type\":\"downloaded\",\"order_by\":[{\"sort\":\"date\",\"order\":\"desc\"}],\"limit\":20,\"offset\":0}";
-            var response = await CloudFunction.Post(Request.Create("SELECT", "unknown", selectRequest));
+            var selectRequest = new SelectRequestBody()
+            {
+                EntryType = EntryType.Downloaded,
+                OrderBy = new SelectRequestBody.SelectOrderBy[] { new SelectRequestBody.SelectOrderBy() { Order = Order.Desc, Sort = Sort.Date } },
+                Limit = 20,
+                Offset = 0
+            };
+            var response = await CloudFunction.Post(Request.Create("SELECT", "unknown", JsonConvert.SerializeObject(selectRequest)));
 
             Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
 
             var selectData = JsonConvert.DeserializeObject<List<SelectResponseData>>(response.Body);
             Assert.That(selectData, Is.Empty);
+        }
+
+        [Test]
+        public async Task Download_003_DownloadAndLike_ShouldBeNoDuplicate()
+        {
+            await CloudFunction.Clear("records");
+            await CloudFunction.Clear("downloads");
+
+            var id = await CloudFunction.Upload("user1", new UploadData() { Image = new byte[] { 1 }, Data = new byte[] { 2 } });
+            await CloudFunction.Download("test_download_1", id);
+            await CloudFunction.Like("test_like_1", id);
+            await CloudFunction.Like("test_like_2", id);
+
+            var selectRequest = new SelectRequestBody()
+            {
+                EntryType = EntryType.Downloaded,
+                OrderBy = new SelectRequestBody.SelectOrderBy[] { new SelectRequestBody.SelectOrderBy() { Order = Order.Desc, Sort = Sort.Date } },
+                Limit = 20,
+                Offset = 0
+            };
+            var response = await CloudFunction.Post(Request.Create("SELECT", "test_download_1", JsonConvert.SerializeObject(selectRequest)));
+
+            Assert.That(response.IsSuccess, Is.True);
+
+            var selectData = JsonConvert.DeserializeObject<List<SelectResponseData>>(response.Body);
+            Assert.That(selectData.Count, Is.EqualTo(1));
         }
     }
 }
