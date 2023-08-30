@@ -40,7 +40,6 @@ namespace ServerSharingTests
                 Offset = 0
             };
             var response = await CloudFunction.Post(Request.Create("SELECT", "test_download_1", JsonConvert.SerializeObject(selectRequest)));
-            TestContext.WriteLine(response.Body);
             Assert.That(response.IsSuccess, Is.True);
 
             var selectData = JsonConvert.DeserializeObject<List<SelectResponseData>>(response.Body);

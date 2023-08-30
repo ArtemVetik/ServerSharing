@@ -18,18 +18,18 @@ namespace ServerSharing
 
             var token = new TokenProvider(new MetadataCredentialsProvider().GetToken());
             var config = new DriverConfig(ydbEndpoint, ydbDatabase, token);
-            
+
             var driver = new Driver(config);
             await driver.Initialize();
 
             var tableClient = new TableClient(driver, new TableClientConfig());
-            
+
             var awsConfig = new AmazonDynamoDBConfig()
             {
                 RegionEndpoint = RegionEndpoint.EUCentral1,
                 EndpointProvider = new EndpointProvider(),
             };
-            
+
             var awsAccessKeyId = Environment.GetEnvironmentVariable("awsAccessKeyId");
             var awsSecretAccessKey = Environment.GetEnvironmentVariable("awsSecretAccessKey");
 
@@ -45,6 +45,7 @@ namespace ServerSharing
                     "DOWNLOAD" => new DownloadRequest(tableClient, request),
                     "SELECT" => new SelectRequest(tableClient, request),
                     "LIKE" => new LikeRequest(tableClient, request),
+                    "DISLIKE" => new DislikeRequest(tableClient, request),
                     "RATE" => new RateRequest(tableClient, request),
                     "COUNT" => new CountRequest(tableClient, request),
 #if TEST_ENVIRONMENT
