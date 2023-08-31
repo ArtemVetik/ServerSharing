@@ -16,9 +16,9 @@ namespace ServerSharingTests
         [Test]
         public async Task Delete_001_CorrectRecord_ShouldDelete()
         {
-            var id = await CloudFunction.Upload("user1", new UploadData() { Image = new byte[] { }, Data = new byte[] { } });
+            var id = await CloudFunction.Upload("user1", new UploadData() { Image = new byte[] { 1 }, Data = new byte[] { 2 } });
             var response = await CloudFunction.Post(Request.Create("DELETE", "user1", id));
-            Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
+            Assert.That(response.IsSuccess, Is.True, response.Body);
 
             var selectData = await SelectAll();
             Assert.That(selectData.Count, Is.EqualTo(0));
@@ -33,9 +33,9 @@ namespace ServerSharingTests
         [Test]
         public async Task Delete_002_InvalidUser_ShouldNotDelete()
         {
-            var id = await CloudFunction.Upload("user1", new UploadData() { Image = new byte[] { }, Data = new byte[] { } });
+            var id = await CloudFunction.Upload("user1", new UploadData() { Image = new byte[] { 1 }, Data = new byte[] { 2 } });
             var response = await CloudFunction.Post(Request.Create("DELETE", "user1_1", id));
-            Assert.True(response.IsSuccess, $"{response.StatusCode}, {response.ReasonPhrase}");
+            Assert.That(response.IsSuccess, Is.True, response.Body);
 
             var selectData = await SelectAll();
             Assert.That(selectData.Count, Is.EqualTo(1));
