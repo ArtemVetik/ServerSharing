@@ -44,6 +44,7 @@ namespace ServerSharing
                     "LOAD_IMAGE" => new LoadImageRequest(tableClient, request),
                     "DOWNLOAD" => new DownloadRequest(tableClient, request),
                     "SELECT" => new SelectRequest(tableClient, request),
+                    "INFO" => new InfoRequest(tableClient, request),
                     "LIKE" => new LikeRequest(tableClient, request),
                     "DISLIKE" => new DislikeRequest(tableClient, request),
                     "RATE" => new RateRequest(tableClient, request),

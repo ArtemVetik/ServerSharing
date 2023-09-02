@@ -3,6 +3,7 @@ using Ydb.Sdk.Client;
 using Ydb.Sdk.Table;
 using Ydb.Sdk.Value;
 using ServerSharing.Data;
+using Yandex.Cloud.Marketplace.V1.Metering;
 
 namespace ServerSharing
 {
@@ -39,6 +40,19 @@ namespace ServerSharing
                         { "$limit", YdbValue.MakeUint64(selectParameters.Limit) },
                         { "$offset", YdbValue.MakeUint64(selectParameters.Offset) }
                     }
+                );
+            });
+        }
+
+        public async Task<IResponse> CreateInfo()
+        {
+            return await _client.SessionExec(async session =>
+            {
+                var query = EntryTypes.CreateInfo(_body, _userId);
+
+                return await session.ExecuteDataQuery(
+                    query: query,
+                    txControl: TxControl.BeginSerializableRW().Commit()
                 );
             });
         }
