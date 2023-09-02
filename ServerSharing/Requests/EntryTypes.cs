@@ -38,13 +38,27 @@ namespace ServerSharing
                     $rating = (SELECT ratings.id, COUNT(ratings.id) as count, AVG(ratings.rating) as avg
                     FROM `{Tables.Ratings}` ratings
                     GROUP BY ratings.id);
+                    
+                    $myRating = (SELECT *
+                    FROM `{Tables.Ratings}` ratings
+                    WHERE ratings.user_id == ""{userId}"");
 
-                    SELECT records.id, records.body, records.date, downloads.count, likes.count, ratings.count, ratings.avg, if (myLikes.id is null, false, true) as myLike
+                    $myDownloads = (SELECT *
+                    FROM `{Tables.Downloads}` downloads
+                    WHERE downloads.user_id == ""{userId}"");
+
+                    SELECT records.id, records.body, records.date, downloads.count, likes.count, ratings.count, ratings.avg,
+                        if (myLikes.id is null, false, true) as myLike,
+                        if (myRating.id is null, false, true) as myRating,
+                        if (myDownloads.id is null, false, true) as myDownload,
+                        if (records.user_id == ""{userId}"", true, false) as myRecord
                     FROM `{Tables.Records}` as records
                     LEFT JOIN $downloads as downloads on downloads.id == records.id
                     LEFT JOIN $likes as likes on likes.id == records.id
                     LEFT JOIN $rating as ratings on ratings.id == records.id
                     LEFT JOIN $myLikes as myLikes on myLikes.id == records.id
+                    LEFT JOIN $myRating as myRating on myRating.id == records.id
+                    LEFT JOIN $myDownloads as myDownloads on myDownloads.id == records.id
                     WHERE records.id == ""{id}""
                 ";
             }
@@ -70,12 +84,26 @@ namespace ServerSharing
                     FROM `{Tables.Ratings}` ratings
                     GROUP BY ratings.id);
 
-                    SELECT records.id, records.body, records.date, downloads.count, likes.count, ratings.count, ratings.avg, if (myLikes.id is null, false, true) as myLike
+                    $myRating = (SELECT *
+                    FROM `{Tables.Ratings}` ratings
+                    WHERE ratings.user_id == ""{userId}"");
+
+                    $myDownloads = (SELECT *
+                    FROM `{Tables.Downloads}` downloads
+                    WHERE downloads.user_id == ""{userId}"");
+
+                    SELECT records.id, records.body, records.date, downloads.count, likes.count, ratings.count, ratings.avg,
+                        if (myLikes.id is null, false, true) as myLike,
+                        if (myRating.id is null, false, true) as myRating,
+                        if (myDownloads.id is null, false, true) as myDownload,
+                        if (records.user_id == ""{userId}"", true, false) as myRecord
                     FROM `{Tables.Records}` as records
                     LEFT JOIN $downloads as downloads on downloads.id == records.id
                     LEFT JOIN $likes as likes on likes.id == records.id
                     LEFT JOIN $rating as ratings on ratings.id == records.id
                     LEFT JOIN $myLikes as myLikes on myLikes.id == records.id
+                    LEFT JOIN $myRating as myRating on myRating.id == records.id
+                    LEFT JOIN $myDownloads as myDownloads on myDownloads.id == records.id
                 ";
             }
 
@@ -103,13 +131,22 @@ namespace ServerSharing
                     FROM `{Tables.Ratings}` ratings
                     GROUP BY ratings.id);
 
-                    SELECT records.id, records.body, records.date, downloads.count, likes.count, ratings.count, ratings.avg, if (myLikes.id is null, false, true) as myLike
+                    $myRating = (SELECT *
+                    FROM `{Tables.Ratings}` ratings
+                    WHERE ratings.user_id == ""{userId}"");
+
+                    SELECT records.id, records.body, records.date, downloads.count, likes.count, ratings.count, ratings.avg,
+                        if (myLikes.id is null, false, true) as myLike,
+                        if (myRating.id is null, false, true) as myRating,
+                        true as myDownload,
+                        if (records.user_id == ""{userId}"", true, false) as myRecord
                     FROM `{Tables.Records}` as records
                     INNER JOIN $myDownloads as myDownloads on myDownloads.id == records.id
                     LEFT JOIN $downloads as downloads on downloads.id == records.id
                     LEFT JOIN $likes as likes on likes.id == records.id
-                    LEFT JOIN $myLikes as myLikes on myLikes.id == records.id
                     LEFT JOIN $rating as ratings on ratings.id == records.id
+                    LEFT JOIN $myLikes as myLikes on myLikes.id == records.id
+                    LEFT JOIN $myRating as myRating on myRating.id == records.id
                 ";
             }
 
@@ -132,12 +169,26 @@ namespace ServerSharing
                     FROM `{Tables.Likes}` likes
                     where likes.user_id == ""{userId}"");
 
-                    SELECT records.id, records.body, records.date, downloads.count, likes.count, ratings.count, ratings.avg, if (myLikes.id is null, false, true) as myLike
+                    $myRating = (SELECT *
+                    FROM `{Tables.Ratings}` ratings
+                    WHERE ratings.user_id == ""{userId}"");
+
+                    $myDownloads = (SELECT *
+                    FROM `{Tables.Downloads}` downloads
+                    WHERE downloads.user_id == ""{userId}"");
+
+                    SELECT records.id, records.body, records.date, downloads.count, likes.count, ratings.count, ratings.avg,
+                        if (myLikes.id is null, false, true) as myLike,
+                        if (myRating.id is null, false, true) as myRating,
+                        if (myDownloads.id is null, false, true) as myDownload,
+                        true as myRecord
                     FROM `{Tables.Records}` as records
                     LEFT JOIN $downloads as downloads on downloads.id == records.id
                     LEFT JOIN $likes as likes on likes.id == records.id
                     LEFT JOIN $rating as ratings on ratings.id == records.id
                     LEFT JOIN $myLikes as myLikes on myLikes.id == records.id
+                    LEFT JOIN $myRating as myRating on myRating.id == records.id
+                    LEFT JOIN $myDownloads as myDownloads on myDownloads.id == records.id
                     WHERE records.user_id == ""{userId}""
                 ";
             }
@@ -162,12 +213,26 @@ namespace ServerSharing
                     FROM `{Tables.Ratings}` ratings
                     GROUP BY ratings.id);
 
-                    SELECT records.id, records.body, records.date, downloads.count, likes.count, ratings.count, ratings.avg, true as myLike
+                    $myRating = (SELECT *
+                    FROM `{Tables.Ratings}` ratings
+                    WHERE ratings.user_id == ""{userId}"");
+
+                    $myDownloads = (SELECT *
+                    FROM `{Tables.Downloads}` downloads
+                    WHERE downloads.user_id == ""{userId}"");
+
+                    SELECT records.id, records.body, records.date, downloads.count, likes.count, ratings.count, ratings.avg,
+                        true as myLike,
+                        if (myRating.id is null, false, true) as myRating,
+                        if (myDownloads.id is null, false, true) as myDownload,
+                        if (records.user_id == ""{userId}"", true, false) as myRecord
                     FROM `{Tables.Records}` as records
                     INNER JOIN $myLikes as myLikes on myLikes.id == records.id
                     LEFT JOIN $likes as likes on likes.id == records.id
                     LEFT JOIN $downloads as downloads on downloads.id == records.id
                     LEFT JOIN $rating as ratings on ratings.id == records.id
+                    LEFT JOIN $myRating as myRating on myRating.id == records.id
+                    LEFT JOIN $myDownloads as myDownloads on myDownloads.id == records.id
                 ";
             }
         }
