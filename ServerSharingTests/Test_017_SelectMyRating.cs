@@ -32,7 +32,7 @@ namespace ServerSharingTests
 
             var selectData = JsonConvert.DeserializeObject<List<SelectResponseData>>(response.Body);
 
-            Assert.That(selectData[0].MyRating, Is.EqualTo(false));
+            Assert.That(selectData[0].MyRating, Is.EqualTo(null));
         }
 
         [Test]
@@ -55,7 +55,7 @@ namespace ServerSharingTests
 
             var selectData = JsonConvert.DeserializeObject<List<SelectResponseData>>(response.Body);
 
-            Assert.That(selectData[0].MyRating, Is.EqualTo(true));
+            Assert.That(selectData[0].MyRating, Is.EqualTo(5));
         }
     }
 }
