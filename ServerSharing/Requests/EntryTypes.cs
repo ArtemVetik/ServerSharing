@@ -49,7 +49,7 @@ namespace ServerSharing
 
                     SELECT records.id, records.body, records.date, downloads.count, likes.count, ratings.count, ratings.avg,
                         if (myLikes.id is null, false, true) as myLike,
-                        if (myRating.id is null, false, true) as myRating,
+                        if (myRating.id is null, null, myRating.rating) as myRating,
                         if (myDownloads.id is null, false, true) as myDownload,
                         if (records.user_id == ""{userId}"", true, false) as myRecord
                     FROM `{Tables.Records}` as records
@@ -94,7 +94,7 @@ namespace ServerSharing
 
                     SELECT records.id, records.body, records.date, downloads.count, likes.count, ratings.count, ratings.avg,
                         if (myLikes.id is null, false, true) as myLike,
-                        if (myRating.id is null, false, true) as myRating,
+                        if (myRating.id is null, null, myRating.rating) as myRating,
                         if (myDownloads.id is null, false, true) as myDownload,
                         if (records.user_id == ""{userId}"", true, false) as myRecord
                     FROM `{Tables.Records}` as records
@@ -137,7 +137,7 @@ namespace ServerSharing
 
                     SELECT records.id, records.body, records.date, downloads.count, likes.count, ratings.count, ratings.avg,
                         if (myLikes.id is null, false, true) as myLike,
-                        if (myRating.id is null, false, true) as myRating,
+                        if (myRating.id is null, null, myRating.rating) as myRating,
                         true as myDownload,
                         if (records.user_id == ""{userId}"", true, false) as myRecord
                     FROM `{Tables.Records}` as records
@@ -179,7 +179,7 @@ namespace ServerSharing
 
                     SELECT records.id, records.body, records.date, downloads.count, likes.count, ratings.count, ratings.avg,
                         if (myLikes.id is null, false, true) as myLike,
-                        if (myRating.id is null, false, true) as myRating,
+                        if (myRating.id is null, null, myRating.rating) as myRating,
                         if (myDownloads.id is null, false, true) as myDownload,
                         true as myRecord
                     FROM `{Tables.Records}` as records
@@ -223,7 +223,7 @@ namespace ServerSharing
 
                     SELECT records.id, records.body, records.date, downloads.count, likes.count, ratings.count, ratings.avg,
                         true as myLike,
-                        if (myRating.id is null, false, true) as myRating,
+                        if (myRating.id is null, null, myRating.rating) as myRating,
                         if (myDownloads.id is null, false, true) as myDownload,
                         if (records.user_id == ""{userId}"", true, false) as myRecord
                     FROM `{Tables.Records}` as records

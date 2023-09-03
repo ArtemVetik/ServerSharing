@@ -40,8 +40,8 @@ namespace ServerSharing
                     Likes = likesCount.TypeId == YdbTypeId.OptionalType ? (likesCount.GetOptionalUint64() ?? 0) : likesCount.GetUint64(),
                     RatingCount = ratingsCount.TypeId == YdbTypeId.OptionalType ? (ratingsCount.GetOptionalUint64() ?? 0) : ratingsCount.GetUint64(),
                     RatingAverage = ratingsAverage.TypeId == YdbTypeId.OptionalType ? (ratingsAverage.GetOptionalDouble() ?? 0) : ratingsAverage.GetDouble(),
+                    MyRating = row["myRating"].GetOptionalInt8(),
                     MyLike = row["myLike"].GetBool(),
-                    MyRating = row["myRating"].GetBool(),
                     MyDownload = row["myDownload"].GetBool(),
                     MyRecord = row["myRecord"].GetBool(),
                 });
