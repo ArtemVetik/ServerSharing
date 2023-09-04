@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using NUnit.Framework;
+using ServerSharing;
 using ServerSharing.Data;
 
 namespace ServerSharingTests
@@ -56,6 +57,29 @@ namespace ServerSharingTests
             var selectData = JsonConvert.DeserializeObject<List<SelectResponseData>>(response.Body);
 
             Assert.That(selectData[0].MyRating, Is.EqualTo(5));
+        }
+
+        [Test]
+        public async Task Info_RateTwice_ShouldReturnNotNull()
+        {
+            var id = await CloudFunction.Upload("user", new UploadData() { Data = new byte[] { 0 }, Image = new byte[] { 1 } });
+
+            await CloudFunction.Rate("test_user", id, 5);
+
+            var response = await CloudFunction.Post(Request.Create("INFO", "test_user", id));
+            Assert.That(response.IsSuccess, Is.True);
+
+            var infoData = JsonConvert.DeserializeObject<SelectResponseData>(response.Body);
+            TestContext.WriteLine(response.Body);
+            Assert.That(infoData.MyRating, Is.EqualTo(5));
+
+            await CloudFunction.Rate("test_user", id, 2);
+
+            response = await CloudFunction.Post(Request.Create("INFO", "test_user", id));
+            Assert.That(response.IsSuccess, Is.True);
+
+            infoData = JsonConvert.DeserializeObject<SelectResponseData>(response.Body);
+            Assert.That(infoData.MyRating, Is.EqualTo(2));
         }
     }
 }
