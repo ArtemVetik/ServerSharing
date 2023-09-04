@@ -35,7 +35,7 @@ namespace ServerSharingTests
         {
             var id = await CloudFunction.Upload("user1", new UploadData() { Image = new byte[] { 1 }, Data = new byte[] { 2 } });
             var response = await CloudFunction.Post(Request.Create("DELETE", "user1_1", id));
-            Assert.That(response.IsSuccess, Is.True, response.Body);
+            Assert.That(response.IsSuccess, Is.False, response.Body);
 
             var selectData = await SelectAll();
             Assert.That(selectData.Count, Is.EqualTo(1));
