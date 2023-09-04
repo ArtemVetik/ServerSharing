@@ -14,12 +14,40 @@ namespace ServerSharing
 
         public DeleteRequest(AmazonDynamoDBClient awsClient, TableClient tableClient, Request request)
             : base(tableClient, request)
-        { 
+        {
             _awsClient = awsClient;
         }
 
         protected async override Task<Response> Handle(TableClient client, Request request)
         {
+            var hasRecordRequest = await client.SessionExec(async session =>
+            {
+                var query = $@"
+                    DECLARE $id AS string;
+                    DECLARE $user_id AS string;
+
+                    SELECT *
+                    FROM `{Tables.Records}`
+                    WHERE id == $id AND user_id == $user_id;
+                ";
+
+                return await session.ExecuteDataQuery(
+                    query: query,
+                    txControl: TxControl.BeginSerializableRW().Commit(),
+                    parameters: new Dictionary<string, YdbValue>
+                    {
+                        { "$id", YdbValue.MakeString(Encoding.UTF8.GetBytes(request.body)) },
+                        { "$user_id", YdbValue.MakeString(Encoding.UTF8.GetBytes(request.user_id)) }
+                    }
+                );
+            });
+
+            var hasRecordResponse = (ExecuteDataQueryResponse)hasRecordRequest;
+            var resultSet = hasRecordResponse.Result.ResultSets[0];
+
+            if (resultSet.Rows.Count == 0)
+                throw new InvalidOperationException("Record not found!");
+
             var awsRequest = new BatchWriteItemRequest(new Dictionary<string, List<WriteRequest>>()
             {
                 {
@@ -55,6 +83,15 @@ namespace ServerSharing
 
                     DELETE FROM `{Tables.Records}`
                     WHERE id == $id AND user_id == $user_id;
+
+                    DELETE from `{Tables.Likes}`
+                    WHERE id == $id;
+
+                    DELETE from `{Tables.Ratings}`
+                    WHERE id == $id;
+
+                    DELETE from `{Tables.Downloads}`
+                    WHERE id == $id;
                 ";
 
                 return await session.ExecuteDataQuery(
