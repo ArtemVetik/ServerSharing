@@ -2,20 +2,20 @@
 using NUnit.Framework;
 using ServerSharing.Data;
 
-namespace ServerSharingTests
+namespace ServerSharing.Tests
 {
     [TestFixture]
-    public class Test_018_SelectMyDownload
+    public class Test_017_SelectMyRating
     {
         [SetUp]
         public async Task Setup()
         {
             await CloudFunction.Clear("records");
-            await CloudFunction.Clear("downloads");
+            await CloudFunction.Clear("rating");
         }
 
         [Test]
-        public async Task SelectAll_NotDownload_ShouldReturnFalse()
+        public async Task SelectAll_NotRate_ShouldReturnFalse()
         {
             await CloudFunction.Upload("user", new UploadData() { Data = new byte[] { 0 }, Image = new byte[] { 1 } });
 
@@ -32,15 +32,15 @@ namespace ServerSharingTests
 
             var selectData = JsonConvert.DeserializeObject<List<SelectResponseData>>(response.Body);
 
-            Assert.That(selectData[0].MyDownload, Is.EqualTo(false));
+            Assert.That(selectData[0].MyRating, Is.EqualTo(null));
         }
 
         [Test]
-        public async Task SelectAll_Download_ShouldReturnTrue()
+        public async Task SelectAll_Rate_ShouldReturnTrue()
         {
             var id = await CloudFunction.Upload("user", new UploadData() { Data = new byte[] { 0 }, Image = new byte[] { 1 } });
 
-            await CloudFunction.Download("test_user", id);
+            await CloudFunction.Rate("test_user", id, 5);
 
             var selectRequest = new SelectRequestBody()
             {
@@ -55,7 +55,30 @@ namespace ServerSharingTests
 
             var selectData = JsonConvert.DeserializeObject<List<SelectResponseData>>(response.Body);
 
-            Assert.That(selectData[0].MyDownload, Is.EqualTo(true));
+            Assert.That(selectData[0].MyRating, Is.EqualTo(5));
+        }
+
+        [Test]
+        public async Task Info_RateTwice_ShouldReturnNotNull()
+        {
+            var id = await CloudFunction.Upload("user", new UploadData() { Data = new byte[] { 0 }, Image = new byte[] { 1 } });
+
+            await CloudFunction.Rate("test_user", id, 5);
+
+            var response = await CloudFunction.Post(Request.Create("INFO", "test_user", id));
+            Assert.That(response.IsSuccess, Is.True);
+
+            var infoData = JsonConvert.DeserializeObject<SelectResponseData>(response.Body);
+            TestContext.WriteLine(response.Body);
+            Assert.That(infoData.MyRating, Is.EqualTo(5));
+
+            await CloudFunction.Rate("test_user", id, 2);
+
+            response = await CloudFunction.Post(Request.Create("INFO", "test_user", id));
+            Assert.That(response.IsSuccess, Is.True);
+
+            infoData = JsonConvert.DeserializeObject<SelectResponseData>(response.Body);
+            Assert.That(infoData.MyRating, Is.EqualTo(2));
         }
     }
 }

@@ -5,9 +5,9 @@ VisualStudioVersion = 17.6.33723.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerSharing", "ServerSharing\ServerSharing.csproj", "{AD8FBE54-F363-4DE5-AE4D-1037867A3A26}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerSharingTests", "ServerSharingTests\ServerSharingTests.csproj", "{B505E621-F747-4998-B862-C17D55A1BDCF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerSharing.Tests", "ServerSharing.Tests\ServerSharing.Tests.csproj", "{B505E621-F747-4998-B862-C17D55A1BDCF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerSharing.Data", "ServerSharing.Data\ServerSharing.Data.csproj", "{D64AA507-C939-49B4-8A63-32EE8D17A293}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerSharing.Data", "ServerSharing.Data\ServerSharing.Data.csproj", "{D64AA507-C939-49B4-8A63-32EE8D17A293}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

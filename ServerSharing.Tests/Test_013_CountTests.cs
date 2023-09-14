@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using ServerSharing.Data;
 
-namespace ServerSharingTests
+namespace ServerSharing.Tests
 {
     [TestFixture]
     public class Test_013_CountTests
