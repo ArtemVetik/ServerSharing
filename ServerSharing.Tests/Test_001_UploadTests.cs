@@ -3,7 +3,7 @@ using NUnit.Framework;
 using ServerSharing.Data;
 using System.Text;
 
-namespace ServerSharingTests
+namespace ServerSharing.Tests
 {
     [TestFixture]
     public class Test_001_UploadTests

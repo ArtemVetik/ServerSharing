@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using ServerSharing.Data;
 
-namespace ServerSharingTests
+namespace ServerSharing.Tests
 {
     public static class CloudFunction
     {

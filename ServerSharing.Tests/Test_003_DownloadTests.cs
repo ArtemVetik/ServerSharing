@@ -2,7 +2,7 @@
 using ServerSharing.Data;
 using System.Text;
 
-namespace ServerSharingTests
+namespace ServerSharing.Tests
 {
     [TestFixture]
     public class Test_003_DownloadTests
