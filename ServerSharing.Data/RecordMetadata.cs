@@ -8,5 +8,6 @@ namespace ServerSharing.Data
     {
         [JsonProperty("name")] public string Name { get; set; }
         [JsonProperty("description")] public string Description { get; set; }
+        [JsonProperty("compatibility_version")] public string CompatibilityVersion { get; set; }
     }
 }
