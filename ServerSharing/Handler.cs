@@ -49,8 +49,9 @@ namespace ServerSharing
                     "DISLIKE" => new DislikeRequest(tableClient, request),
                     "RATE" => new RateRequest(tableClient, request),
                     "COUNT" => new CountRequest(tableClient, request),
-#if TEST_ENVIRONMENT
+#if ADMIN_ENVIRONMENT
                 "CLEAR" => new ClearRequest(awsClient, tableClient, request),
+                "USER_ID" => new UserIdRequest(tableClient, request),
 #endif
                     _ => throw new InvalidOperationException($"Method {request.method} not found")
                 };

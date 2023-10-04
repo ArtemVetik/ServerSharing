@@ -1,4 +1,4 @@
-﻿#if TEST_ENVIRONMENT
+﻿#if ADMIN_ENVIRONMENT
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using ServerSharing.Data;

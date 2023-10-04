@@ -6,6 +6,8 @@
     <Nullable>disable</Nullable>
 
     <IsPackable>false</IsPackable>
+
+    <Configurations>Debug;Release;ADMIN_ENVIRONMENT</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
