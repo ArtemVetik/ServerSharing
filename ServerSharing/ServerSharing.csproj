@@ -5,6 +5,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
+    <Configurations>Debug;Release;ADMIN_ENVIRONMENT</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
