@@ -41,8 +41,8 @@ namespace ServerSharing
                 {
                     "UPLOAD" => new UploadRequest(awsClient, tableClient, request),
                     "DELETE" => new DeleteRequest(awsClient, tableClient, request),
-                    "LOAD_IMAGE" => new LoadImageRequest(tableClient, request),
-                    "DOWNLOAD" => new DownloadRequest(tableClient, request),
+                    "LOAD_IMAGE" => new LoadImageRequest(awsClient, tableClient, request),
+                    "DOWNLOAD" => new DownloadRequest(awsClient, tableClient, request),
                     "SELECT" => new SelectRequest(tableClient, request),
                     "INFO" => new InfoRequest(tableClient, request),
                     "LIKE" => new LikeRequest(tableClient, request),
