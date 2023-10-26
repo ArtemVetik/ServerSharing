@@ -2,46 +2,38 @@
 using Ydb.Sdk.Value;
 using System.Text;
 using ServerSharing.Data;
+using Amazon.DynamoDBv2.Model;
+using System.Net;
+using Amazon.DynamoDBv2;
 
 namespace ServerSharing
 {
     public class DownloadRequest : BaseRequest
     {
-        public DownloadRequest(TableClient tableClient, Request request)
+        private readonly AmazonDynamoDBClient _awsClient;
+
+        public DownloadRequest(AmazonDynamoDBClient awsClient, TableClient tableClient, Request request)
             : base(tableClient, request)
-        { }
+        {
+            _awsClient = awsClient;
+        }
 
         protected async override Task<Response> Handle(TableClient client, Request request)
         {
-            var response = await client.SessionExec(async session =>
+            var awsRequest = new GetItemRequest(Tables.Data, new Dictionary<string, AttributeValue>()
             {
-                var query = $@"
-                    DECLARE $id AS string;
-
-                    SELECT data
-                    FROM `{Tables.Data}`
-                    WHERE id = $id;
-                ";
-
-                return await session.ExecuteDataQuery(
-                    query: query,
-                    txControl: TxControl.BeginSerializableRW().Commit(),
-                    parameters: new Dictionary<string, YdbValue>
-                    {
-                        { "$id", YdbValue.MakeString(Encoding.UTF8.GetBytes(request.body)) }
-                    }
-                );
+                { "id", new AttributeValue {S = request.body } }
             });
 
-            if (response.Status.IsSuccess == false)
-                return new Response((uint)response.Status.StatusCode, response.Status.StatusCode.ToString(), string.Empty);
+            var awsResponse = await _awsClient.GetItemAsync(awsRequest);
 
-            var queryResponse = (ExecuteDataQueryResponse)response;
+            if (awsResponse.HttpStatusCode != HttpStatusCode.OK)
+                throw new InvalidOperationException("Error GetItemAsync: " + awsResponse);
 
-            if (queryResponse.Result.ResultSets[0].Rows.Count == 0)
+            if (awsResponse.Item.Count == 0)
                 throw new InvalidOperationException("Record not found!");
 
-            response = await client.SessionExec(async session =>
+            var response = await client.SessionExec(async session =>
             {
                 var query = $@"
                     DECLARE $user_id AS string;
@@ -62,8 +54,7 @@ namespace ServerSharing
                 );
             });
 
-            var data = queryResponse.Result.ResultSets[0].Rows[0]["data"].GetOptionalString();
-
+            var data = awsResponse.Item["data"].B.ToArray();
             return new Response((uint)response.Status.StatusCode, response.Status.StatusCode.ToString(), Convert.ToBase64String(data));
         }
     }
