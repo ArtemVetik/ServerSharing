@@ -3,7 +3,6 @@ using Ydb.Sdk.Client;
 using Ydb.Sdk.Table;
 using Ydb.Sdk.Value;
 using ServerSharing.Data;
-using Yandex.Cloud.Marketplace.V1.Metering;
 
 namespace ServerSharing
 {
@@ -28,7 +27,7 @@ namespace ServerSharing
             {
                 var query = $@" DECLARE $limit AS Uint64;
                                 DECLARE $offset AS Uint64;
-                                {EntryTypes.Create(selectParameters.EntryType, _userId)} 
+                                {SelectQueryContainer.Create(selectParameters.EntryType, _userId)} 
                                 ORDER BY {CreateOrderBy(selectParameters.OrderBy)}
                                 LIMIT $limit OFFSET $offset;";
 
@@ -44,20 +43,7 @@ namespace ServerSharing
             });
         }
 
-        public async Task<IResponse> CreateInfo()
-        {
-            return await _client.SessionExec(async session =>
-            {
-                var query = EntryTypes.CreateInfo(_body, _userId);
-
-                return await session.ExecuteDataQuery(
-                    query: query,
-                    txControl: TxControl.BeginSerializableRW().Commit()
-                );
-            });
-        }
-
-        private SelectRequestBody ParseSelectParameters(string body)
+        private static SelectRequestBody ParseSelectParameters(string body)
         {
             try
             {
@@ -83,7 +69,7 @@ namespace ServerSharing
             }
         }
 
-        private string CreateOrderBy(SelectRequestBody.SelectOrderBy[] orderBy)
+        private static string CreateOrderBy(SelectRequestBody.SelectOrderBy[] orderBy)
         {
             var result = string.Empty;
 
