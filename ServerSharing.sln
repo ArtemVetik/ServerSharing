@@ -9,6 +9,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerSharing.Tests", "Serv
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServerSharing.Data", "ServerSharing.Data\ServerSharing.Data.csproj", "{D64AA507-C939-49B4-8A63-32EE8D17A293}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{81E7B5FA-B3C9-4AB9-9D3F-C81AEDCB0DE5}"
+	ProjectSection(SolutionItems) = preProject
+		CHANGELOG.md = CHANGELOG.md
+		LICENSE.md = LICENSE.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		ADMIN_ENVIRONMENT|Any CPU = ADMIN_ENVIRONMENT|Any CPU
