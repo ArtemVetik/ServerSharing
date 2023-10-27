@@ -19,8 +19,12 @@ namespace ServerSharing
                     DECLARE $user_id AS string;
                     DECLARE $id AS string;
 
-                    UPSERT INTO `{Tables.Likes}` (user_id, id)
+                    INSERT INTO `{Tables.Likes}` (user_id, id)
                     VALUES ($user_id, $id);
+
+                    UPDATE `{Tables.Records}`
+                    SET like_count = if (like_count is null, 1u, like_count + 1u)
+                    WHERE id = $id;
                 ";
 
                 return await session.ExecuteDataQuery(

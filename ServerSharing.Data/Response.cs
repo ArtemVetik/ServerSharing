@@ -2,8 +2,6 @@
 {
     public class Response
     {
-        public const uint SuccessCode = 400000u;
-
         public Response(uint statusCode, string reasonPhrase, string body)
         {
             StatusCode = statusCode;

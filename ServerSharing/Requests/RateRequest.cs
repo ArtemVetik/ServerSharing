@@ -35,8 +35,20 @@ namespace ServerSharing
                     DECLARE $id AS string;
                     DECLARE $rating AS int8;
 
-                    UPSERT INTO `{Tables.Ratings}` (user_id, id, rating)
+                    $avg_rating = (SELECT CAST(AVG(ratings.rating) as float?)
+                    from `{Tables.Ratings}` VIEW idx_id ratings
+                    where ratings.id = $id);
+
+                    INSERT INTO `{Tables.Ratings}` (user_id, id, rating)
                     VALUES ($user_id, $id, $rating);
+
+                    UPDATE `{Tables.Ratings}`
+                    SET rating_count = if (rating_count is null, 1u, rating_count + 1u)
+                    WHERE id = $id;
+
+                    UPDATE `{Tables.Records}`
+                    SET rating_avg = if (rating_avg is null, 3, $avg_rating)
+                    WHERE id = $id;
                 ";
 
                 return await session.ExecuteDataQuery(

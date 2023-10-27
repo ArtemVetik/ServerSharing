@@ -39,8 +39,12 @@ namespace ServerSharing
                     DECLARE $user_id AS string;
                     DECLARE $id AS string;
 
-                    UPSERT INTO `{Tables.Downloads}` (user_id, id)
+                    INSERT INTO `{Tables.Downloads}` (user_id, id)
                     VALUES ($user_id, $id);
+
+                    UPDATE `{Tables.Records}`
+                    SET download_count = if (download_count is null, 1u, download_count + 1u)
+                    WHERE id = $id;
                 ";
 
                 return await session.ExecuteDataQuery(
@@ -55,7 +59,7 @@ namespace ServerSharing
             });
 
             var data = awsResponse.Item["data"].B.ToArray();
-            return new Response((uint)response.Status.StatusCode, response.Status.StatusCode.ToString(), Convert.ToBase64String(data));
+            return new Response((uint)Ydb.Sdk.StatusCode.Success, Ydb.Sdk.StatusCode.Success.ToString(), Convert.ToBase64String(data));
         }
     }
 }
