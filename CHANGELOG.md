@@ -8,7 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Added
 
 - `ADMIN_ENVIRONMENT` configuration instead of `TEST_ENVIRONMENT`. 
-- Add the `USER_ID` request (only for `ADMIN_ENVIRONMENT`).
+- Added the `USER_ID` request (only for `ADMIN_ENVIRONMENT`).
+- Added the following fields to the records table: `downloads_count`, `likes_count`, `rating_count`, `rating_avg`.
 
 ### Changed
 
