@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
-using Ydb.Sdk.Client;
+﻿using Ydb.Sdk.Client;
 using Ydb.Sdk.Table;
 using Ydb.Sdk.Value;
 using ServerSharing.Data;
+using System.Text;
 
 namespace ServerSharing
 {
@@ -21,52 +21,48 @@ namespace ServerSharing
 
         public async Task<IResponse> CreateQuery()
         {
-            var selectParameters = ParseSelectParameters(_body);
+            var selectParameters = SelectExtentions.ParseSelectRequestBody(_body);
 
             return await _client.SessionExec(async session =>
             {
-                var query = $@" DECLARE $limit AS Uint64;
+                var query = $@" DECLARE $user_id AS String;
+                                DECLARE $limit AS Uint64;
                                 DECLARE $offset AS Uint64;
-                                {SelectQueryContainer.Create(selectParameters.EntryType, _userId)} 
+
+                                $data = ({SelectQueryContainer.Create(selectParameters.EntryType)} 
                                 ORDER BY {CreateOrderBy(selectParameters.OrderBy)}
-                                LIMIT $limit OFFSET $offset;";
+                                LIMIT $limit OFFSET $offset);
+                                
+                                $downloads = (SELECT id, true AS my_download
+                                FROM `{Tables.Downloads}`
+                                WHERE user_id = $user_id);
+
+                                $likes = (SELECT id, true AS my_like
+                                FROM `{Tables.Likes}`
+                                WHERE user_id = $user_id);
+
+                                $rating = (SELECT id, rating as my_rating
+                                FROM `{Tables.Ratings}`
+                                WHERE user_id = $user_id);
+
+                                SELECT *
+                                FROM $data AS data
+                                LEFT JOIN $downloads AS downloads ON downloads.id = data.id
+                                LEFT JOIN $likes AS likes ON likes.id = data.id
+                                LEFT JOIN $rating AS rating ON rating.id = data.id;
+                            ";
 
                 return await session.ExecuteDataQuery(
                     query: query,
                     txControl: TxControl.BeginSerializableRW().Commit(),
                     parameters: new Dictionary<string, YdbValue>
                     {
+                        { "$user_id", YdbValue.MakeString(Encoding.UTF8.GetBytes(_userId)) },
                         { "$limit", YdbValue.MakeUint64(selectParameters.Limit) },
                         { "$offset", YdbValue.MakeUint64(selectParameters.Offset) }
                     }
                 );
             });
-        }
-
-        private static SelectRequestBody ParseSelectParameters(string body)
-        {
-            try
-            {
-                var selectData = JsonConvert.DeserializeObject<SelectRequestBody>(body);
-
-                if (Enum.IsDefined(typeof(EntryType), selectData.EntryType) == false)
-                    throw new ArgumentException($"Request is missing {nameof(selectData.EntryType)} parameter");
-
-                foreach (var orderBy in selectData.OrderBy)
-                {
-                    if (Enum.IsDefined(typeof(Sort), orderBy.Sort) == false)
-                        throw new ArgumentException($"Request is missing {nameof(orderBy.Sort)} parameter");
-
-                    if (Enum.IsDefined(typeof(Order), orderBy.Order) == false)
-                        throw new ArgumentException($"Request is missing {nameof(orderBy.Order)} parameter");
-                }
-
-                return selectData;
-            }
-            catch (Exception exception)
-            {
-                throw new InvalidOperationException("Request body has an invalid format", exception);
-            }
         }
 
         private static string CreateOrderBy(SelectRequestBody.SelectOrderBy[] orderBy)
@@ -77,11 +73,11 @@ namespace ServerSharing
             {
                 var sortColumn = orderBy[i].Sort switch
                 {
-                    Sort.Date => "records.date",
-                    Sort.Downloads => "downloads.count",
-                    Sort.Likes => "likes.count",
-                    Sort.RaingCount => "ratings.count",
-                    Sort.RaingAverage => "ratings.avg",
+                    Sort.Date => "date",
+                    Sort.Downloads => "download_count",
+                    Sort.Likes => "like_count",
+                    Sort.RaingCount => "rating_count",
+                    Sort.RaingAverage => "rating_avg",
                     _ => throw new NotImplementedException()
                 };
 
