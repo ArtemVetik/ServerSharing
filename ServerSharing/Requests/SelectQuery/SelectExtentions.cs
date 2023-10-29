@@ -9,25 +9,55 @@ namespace ServerSharing
     {
         public static SelectResponseData CreateResponseData(this ResultSet.Row row)
         {
-            var downloadsCount = row["downloads.count"];
-            var likesCount = row["likes.count"];
-            var ratingsCount = row["ratings.count"];
-            var ratingsAverage = row["ratings.avg"];
+            var downloadsCount = row["download_count"];
+            var likesCount = row["like_count"];
+            var ratingsCount = row["rating_count"];
+            var ratingsAverage = row["rating_avg"];
+            var myRating = row["my_rating"];
+            var myLike = row["my_like"];
+            var myDownload = row["my_download"];
+            var myRecord = row["my_record"];
 
             return new SelectResponseData()
             {
-                Id = Encoding.UTF8.GetString(row["records.id"].GetString()),
-                Metadata = JsonConvert.DeserializeObject<RecordMetadata>(row["records.body"].GetOptionalJson()),
-                Datetime = row["records.date"].GetOptionalDatetime() ?? DateTime.MinValue,
-                Downloads = downloadsCount.TypeId == YdbTypeId.OptionalType ? (downloadsCount.GetOptionalUint64() ?? 0) : downloadsCount.GetUint64(),
-                Likes = likesCount.TypeId == YdbTypeId.OptionalType ? (likesCount.GetOptionalUint64() ?? 0) : likesCount.GetUint64(),
-                RatingCount = ratingsCount.TypeId == YdbTypeId.OptionalType ? (ratingsCount.GetOptionalUint64() ?? 0) : ratingsCount.GetUint64(),
-                RatingAverage = ratingsAverage.TypeId == YdbTypeId.OptionalType ? (ratingsAverage.GetOptionalDouble() ?? 0) : ratingsAverage.GetDouble(),
-                MyRating = row["myRating"].GetOptionalInt8(),
-                MyLike = row["myLike"].GetBool(),
-                MyDownload = row["myDownload"].GetBool(),
-                MyRecord = row["myRecord"].GetBool(),
+                Id = Encoding.UTF8.GetString(row["id"].GetString()),
+                Metadata = JsonConvert.DeserializeObject<RecordMetadata>(row["body"].GetOptionalJson()),
+                Datetime = row["date"].GetOptionalDatetime() ?? DateTime.MinValue,
+                Downloads = downloadsCount.TypeId == YdbTypeId.OptionalType ? (downloadsCount.GetOptionalUint32() ?? 0) : downloadsCount.GetUint32(),
+                Likes = likesCount.TypeId == YdbTypeId.OptionalType ? (likesCount.GetOptionalUint32() ?? 0) : likesCount.GetUint32(),
+                RatingCount = ratingsCount.TypeId == YdbTypeId.OptionalType ? (ratingsCount.GetOptionalUint32() ?? 0) : ratingsCount.GetUint32(),
+                RatingAverage = ratingsAverage.TypeId == YdbTypeId.OptionalType ? (ratingsAverage.GetOptionalFloat() ?? 0) : ratingsAverage.GetFloat(),
+                MyRating = myRating.GetOptionalInt8(),
+                MyLike = myLike.GetOptional() != null && myLike.GetOptional().GetBool(),
+                MyDownload = myDownload.GetOptional() != null && myDownload.GetOptional().GetBool(),
+                MyRecord = myRecord.GetBool(),
             };
+        }
+
+        public static SelectRequestBody ParseSelectRequestBody(this  string body)
+        {
+            try
+            {
+                var selectData = JsonConvert.DeserializeObject<SelectRequestBody>(body);
+
+                if (Enum.IsDefined(typeof(EntryType), selectData.EntryType) == false)
+                    throw new ArgumentException($"Request is missing {nameof(selectData.EntryType)} parameter");
+
+                foreach (var orderBy in selectData.OrderBy)
+                {
+                    if (Enum.IsDefined(typeof(Sort), orderBy.Sort) == false)
+                        throw new ArgumentException($"Request is missing {nameof(orderBy.Sort)} parameter");
+
+                    if (Enum.IsDefined(typeof(Order), orderBy.Order) == false)
+                        throw new ArgumentException($"Request is missing {nameof(orderBy.Order)} parameter");
+                }
+
+                return selectData;
+            }
+            catch (Exception exception)
+            {
+                throw new InvalidOperationException("Request body has an invalid format", exception);
+            }
         }
     }
 }

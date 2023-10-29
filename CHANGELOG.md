@@ -9,12 +9,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - `ADMIN_ENVIRONMENT` configuration instead of `TEST_ENVIRONMENT`. 
 - Added the `USER_ID` request (only for `ADMIN_ENVIRONMENT`).
-- Added the following fields to the records table: `downloads_count`, `likes_count`, `rating_count`, `rating_avg`.
+- Added the following attributes to the records table: `downloads_count`, `likes_count`, `rating_count`, `rating_avg`.
 
 ### Changed
 
 - Replace `YDB API` with `Document API` in `DOWNLOAD` and `LOAD_IMAGE` requests to reduce the cost of requests.
-- Copyright in LICENSE.
+- Changed the `SELECT` query and reduced its cost by adding new count attributes.
+- Changed Copyright in LICENSE.
 
 ## [1.0.0] - 2023-09-14
 
