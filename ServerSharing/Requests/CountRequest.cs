@@ -70,7 +70,7 @@ namespace ServerSharing
         {
             return $@"
                     SELECT COUNT(*) as count
-                    FROM `{Tables.Records}` as records
+                    FROM `{Tables.Records}` VIEW idx_user_id as records
                     where records.user_id == $user_id";
         }
 
