@@ -46,7 +46,7 @@ namespace ServerSharing.Tests
             var response = await CloudFunction.Post(Request.Create("DOWNLOAD", userId, id));
 
             if (response.IsSuccess == false)
-                throw new InvalidOperationException($"Upload error: {response.Body}");
+                throw new InvalidOperationException($"Download error: {response.Body}");
         }
 
         public static async Task Like(string userId, string id)
@@ -54,7 +54,7 @@ namespace ServerSharing.Tests
             var response = await CloudFunction.Post(Request.Create("LIKE", userId, id));
 
             if (response.IsSuccess == false)
-                throw new InvalidOperationException($"Upload error: {response.Body}");
+                throw new InvalidOperationException($"Like error: {response.Body}");
         }
 
         public static async Task Rate(string userId, string id, sbyte rating)
@@ -66,7 +66,7 @@ namespace ServerSharing.Tests
             })));
 
             if (response.IsSuccess == false)
-                throw new InvalidOperationException($"Upload error: {response.Body}");
+                throw new InvalidOperationException($"Rate error: {response.Body}");
         }
 
         public static async Task Delete(string userId, string id)
@@ -74,7 +74,7 @@ namespace ServerSharing.Tests
             var response = await CloudFunction.Post(Request.Create("DELETE", userId, id));
 
             if (response.IsSuccess == false)
-                throw new InvalidOperationException($"Upload error: {response.Body}");
+                throw new InvalidOperationException($"Delete error: {response.Body}");
         }
     }
 }

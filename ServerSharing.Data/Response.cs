@@ -9,7 +9,7 @@
             ReasonPhrase = reasonPhrase;
         }
 
-        public bool IsSuccess => StatusCode == SuccessCode;
+        public bool IsSuccess => StatusCode == 400000u;
         public uint StatusCode { get; private set; }
         public string ReasonPhrase { get; private set; }
         public string Body { get; private set; }
