@@ -52,6 +52,7 @@ namespace ServerSharing
 #if ADMIN_ENVIRONMENT
                 "CLEAR" => new ClearRequest(awsClient, tableClient, request),
                 "USER_ID" => new UserIdRequest(tableClient, request),
+                "FORCE_UPDATE_ALL_COUNT" => new ForceUpdateAllCounts(tableClient, request),
 #endif
                     _ => throw new InvalidOperationException($"Method {request.method} not found")
                 };

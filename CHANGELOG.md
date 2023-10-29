@@ -7,9 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Added
 
-- `ADMIN_ENVIRONMENT` configuration instead of `TEST_ENVIRONMENT`. 
-- Added the `USER_ID` request (only for `ADMIN_ENVIRONMENT`).
 - Added the following attributes to the records table: `downloads_count`, `likes_count`, `rating_count`, `rating_avg`.
+- Added `ADMIN_ENVIRONMENT` configuration instead of `TEST_ENVIRONMENT`. 
+- Added the `USER_ID` request (only for `ADMIN_ENVIRONMENT`).
+- Added `FORCE_UPDATE_ALL_COUNT` request (only for `ADMIN_ENVIRONMENT`) for complete update of `count` attributes in the records table.
 
 ### Changed
 
